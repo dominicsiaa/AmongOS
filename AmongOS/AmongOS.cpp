@@ -2,10 +2,30 @@
 //
 
 #include <iostream>
+#include <string>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+int main() {
+    cout << R"(  
+   ____    ___ ___   ___   ____    ____       ___   _____
+ _/__  |_ |   |   | /   \ |    \  /    |     /   \ / ___/
+|____| | || _   _ ||     ||  _  ||   __|    |     (   \_ 
+ |     | ||  \_/  ||  O  ||  |  ||  |  |    |  O  |\__  |
+ |  _  | ||   |   ||     ||  |  ||  |_ |    |     |/  \ |
+ |  |  |_||   |   ||     ||  |  ||     |    |     |\    |
+ |__|__|  |___|___| \___/ |__|__||___,_|     \___/  \___|
+)" << endl;
+
+    // Initial welcome message (w/ color)
+    cout << "\033[1;32m" << "Hello, Welcome to Among OS commandline!" << endl;
+    cout << "\033[1;33m" << "Type 'exit' to quit, 'clear' to clear the screen" << endl;
+    cout << "\033[0m" << "Enter a command: " << endl;
+    
+    string command;
+    cin >> command;
+
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
