@@ -35,26 +35,26 @@ int main() {
         cin >> command;
 
         if (command == "initialize") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something" << endl;
         }
         else if (command == "screen") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something" << endl;
         }
         else if (command == "scheduler-test") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something" << endl;
         }
         else if (command == "scheduler-stop") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something" << endl;
         }
         else if (command == "report-util") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something" << endl;
         }
         else if (command == "clear") {
             system("cls");
             printHeader();
         }
         else if (command == "exit") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something"  << endl;
+            cout << "\033[1;32m" << command + " command recognized. Doing something"  << endl;
             // TODO: working exit command
         }
         else {
