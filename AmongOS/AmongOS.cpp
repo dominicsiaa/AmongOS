@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
-int main() {
+void printHeader () {
     cout << R"(  
    ____    ___ ___   ___   ____    ____       ___   _____
  _/__  |_ |   |   | /   \ |    \  /    |     /   \ / ___/
@@ -20,6 +21,12 @@ int main() {
     // Initial welcome message (w/ color)
     cout << "\033[1;32m" << "Hello, Welcome to Among OS commandline!" << endl;
     cout << "\033[1;33m" << "Type 'exit' to quit, 'clear' to clear the screen" << endl;
+    
+}
+
+int main() {
+
+    printHeader();
     
     string command;
 
@@ -43,15 +50,15 @@ int main() {
             cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
         }
         else if (command == "clear") {
-            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
-            // TODO: working clear command
+            system("cls");
+            printHeader();
         }
         else if (command == "exit") {
             cout << "\033[1;32m" << command + " command recognized. Doing Something"  << endl;
             // TODO: working exit command
         }
         else {
-            // TODO: error handling
+             cout << "\033[1;31m" << "Error: command not recognized. Please try again"  << endl;
         }
     }
 
