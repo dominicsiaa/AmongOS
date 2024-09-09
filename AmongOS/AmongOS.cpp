@@ -20,10 +20,40 @@ int main() {
     // Initial welcome message (w/ color)
     cout << "\033[1;32m" << "Hello, Welcome to Among OS commandline!" << endl;
     cout << "\033[1;33m" << "Type 'exit' to quit, 'clear' to clear the screen" << endl;
-    cout << "\033[0m" << "Enter a command: " << endl;
     
     string command;
-    cin >> command;
+
+    while (true) {
+        cout << "\033[0m" << "Enter a command: " << endl;
+        cin >> command;
+
+        if (command == "initialize") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+        }
+        else if (command == "screen") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+        }
+        else if (command == "scheduler-test") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+        }
+        else if (command == "scheduler-stop") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+        }
+        else if (command == "report-util") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+        }
+        else if (command == "clear") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something" << endl;
+            // TODO: working clear command
+        }
+        else if (command == "exit") {
+            cout << "\033[1;32m" << command + " command recognized. Doing Something"  << endl;
+            // TODO: working exit command
+        }
+        else {
+            // TODO: error handling
+        }
+    }
 
     return 0;
 }
