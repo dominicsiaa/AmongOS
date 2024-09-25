@@ -58,10 +58,15 @@ void MainConsole::process()
     else if (command == "test")
     {
         auto process = std::make_shared<Process>("ExampleProcess", 100);
+        this->addProcess(process);
         auto baseScreen = std::make_shared<BaseScreen>(process, "ExampleScreen");
 
         ConsoleManager::getInstance()->registerScreen(baseScreen);
         ConsoleManager::getInstance()->switchToScreen("ExampleScreen");
+    }
+    else if (command == "test2")
+    {
+	    this->listProcesses();
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";
@@ -80,7 +85,12 @@ void MainConsole::addProcess(std::shared_ptr<Process> newProcess)
 
 void MainConsole::listProcesses() const
 {
-	
+	for (auto& process : this->processTable)
+	{
+		std::cout << "Process Name: " << process->getName() << std::endl;
+		std::cout << "Process Current Line of Instruction: " << process->getCurrentLine() << std::endl;
+		std::cout << "Process Total Lines of Instruction: " << process->getTotalLines() << std::endl;
+	}
 }
 
 
