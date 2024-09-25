@@ -5,18 +5,54 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Console">
+      <UniqueIdentifier>{d46f2a18-e009-4fbf-b4e8-37b0c05030d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{b645d90b-4128-4e9b-b085-3d1a38aac749}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AmongOS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleManager.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="AConsole.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScreen.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="MainConsole.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ConsoleManager.h">
+      <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedefRepo.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="AConsole.h">
+      <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScreen.h">
+      <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="MainConsole.h">
+      <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.h">
+      <Filter>Console</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

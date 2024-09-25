@@ -24,7 +24,7 @@ void printHeader () {
     
 }
 
-int main() {
+int old_main() {
 
     printHeader();
     
