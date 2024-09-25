@@ -30,8 +30,8 @@ int old_main() {
     
     string command;
 
-    while (true) {
-        cout << "\033[0m" << "Enter a command: " << endl;
+    do {
+        cout << "\033[0m" << "Enter a command: ";
         cin >> command;
 
         if (command == "initialize") {
@@ -55,12 +55,12 @@ int old_main() {
         }
         else if (command == "exit") {
             cout << "\033[1;32m" << command + " command recognized. Doing Something"  << endl;
-            // TODO: working exit command
         }
         else {
              cout << "\033[1;31m" << "Error: command not recognized. Please try again"  << endl;
         }
     }
+    while (command != "exit");
 
     return 0;
 }
