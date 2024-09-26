@@ -38,7 +38,7 @@ void ConsoleManager::process() const
 	}
 	else
 	{
-		std::cerr << "No console to process" << std::endl;
+		std::cerr << "No console to process\n";
 	}
 }
 
@@ -53,7 +53,7 @@ void ConsoleManager::switchConsole(String consoleName)
 	}
 	else
 	{
-		std::cerr << "Console not found" << std::endl;
+		std::cerr << "Console not found\n";
 	}
 }
 
@@ -105,7 +105,7 @@ void ConsoleManager::returnToPreviousConsole()
 	}
 	else
 	{
-		std::cerr << "No previous console to return to" << std::endl;
+		std::cerr << "No previous console to return to\n";
 	}
 }
 

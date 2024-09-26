@@ -69,7 +69,7 @@ void MainConsole::process()
         {
             if (process->getName() == processName)
             {
-                std::cout << "Process with this name already exists!" << std::endl;
+                std::cout << "Process with this name already exists!\n";
                 return;
             }
         }
