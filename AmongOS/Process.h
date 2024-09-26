@@ -10,9 +10,9 @@ public:
     String getName() const;
     int getCurrentLine() const;
     int getTotalLines() const;
-
+   
 private:
     String name;         
     int currentLine;         
-    int totalLines;          
+    int totalLines;
 };

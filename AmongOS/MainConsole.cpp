@@ -1,6 +1,7 @@
 #include "ConsoleManager.h"
 #include "MainConsole.h"
 #include <iostream>
+#include <regex>
 
 MainConsole::MainConsole() : AConsole("MainConsole")
 {
@@ -31,6 +32,12 @@ void MainConsole::process()
 	String command;
 	std::getline(std::cin, command);
 
+  
+    // Regular expressions for screen -r <name> and screen -s <name>
+    std::regex screenCommandR("screen -r (\\w+)");
+    std::regex screenCommandS("screen -s (\\w+)");
+    std::smatch match;
+
     if (command == "initialize") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
     }
@@ -54,6 +61,45 @@ void MainConsole::process()
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
         ConsoleManager::getInstance()->exitApplication();
     }
+    //Handle `screen -s <name>`
+    else if (std::regex_search(command, match, screenCommandS))
+    {
+        String processName = match[1].str();
+        for (const auto& process : this->processTable)
+        {
+            if (process->getName() == processName)
+            {
+                std::cout << "Process with this name already exists!" << std::endl;
+                return;
+            }
+        }
+        auto process = std::make_shared<Process>(processName, 100);  
+        this->addProcess(process);
+        auto newScreen = std::make_shared<BaseScreen>(process, processName);
+
+        ConsoleManager::getInstance()->registerScreen(newScreen);
+        ConsoleManager::getInstance()->switchToScreen(processName);
+    }
+    // Handle `screen -r <name>`
+    else if (std::regex_search(command, match, screenCommandR))
+    {
+        String processName = match[1].str();
+        std::cout << "Retrieving process: " << processName << std::endl;
+
+        for (const auto& process : this->processTable)
+        {
+            if (process->getName() == processName)
+            {
+                auto newScreen = std::make_shared<BaseScreen>(process, processName);
+                ConsoleManager::getInstance()->registerScreen(newScreen);
+                ConsoleManager::getInstance()->switchToScreen(processName);
+                return;
+            }
+        }
+        std::cerr << "Process '" <<processName <<"' not found\n";
+
+    }
+   
     //TODO: REMOVE WHEN DONE!!! This is just for testing, it moves to a test screen and you can exit from it woahhhhh :o
     else if (command == "test")
     {
