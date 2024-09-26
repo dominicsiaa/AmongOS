@@ -99,21 +99,6 @@ void MainConsole::process()
         std::cerr << "Process '" <<processName <<"' not found\n";
 
     }
-   
-    //TODO: REMOVE WHEN DONE!!! This is just for testing, it moves to a test screen and you can exit from it woahhhhh :o
-    else if (command == "test")
-    {
-        auto process = std::make_shared<Process>("ExampleProcess", 100);
-        this->addProcess(process);
-        auto baseScreen = std::make_shared<BaseScreen>(process, "ExampleScreen");
-
-        ConsoleManager::getInstance()->registerScreen(baseScreen);
-        ConsoleManager::getInstance()->switchToScreen("ExampleScreen");
-    }
-    else if (command == "test2")
-    {
-	    this->listProcesses();
-    }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";
     }
