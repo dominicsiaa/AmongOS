@@ -18,8 +18,10 @@ public:
     // Process Table related functions
     void addProcess(std::shared_ptr<Process> newProcess);
     void listProcesses() const;
+    void appendToDisplayHistory(const std::string text);
 
 private:
     std::vector<std::shared_ptr<Process>> processTable;
     std::stringstream createCurrentTimestamp() const;
+    std::string displayHistory;
 };

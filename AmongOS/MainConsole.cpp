@@ -8,6 +8,12 @@
 
 MainConsole::MainConsole() : AConsole("MainConsole") {}
 
+std::string displayHistory;
+
+void MainConsole::appendToDisplayHistory(const std::string text) {
+    displayHistory += text + "\n";
+}
+
 void MainConsole::onEnabled() {
     std::cout << R"(  
    ____    ___ ___   ___   ____    ____       ___   _____
@@ -22,6 +28,7 @@ void MainConsole::onEnabled() {
 
     std::cout << "\033[1;32m" << "Hello, Welcome to Among OS commandline!\n";
     std::cout << "\033[1;33m" << "Type 'exit' to quit, 'clear' to clear the screen\n";
+    std::cout << displayHistory;
 }
 
 void MainConsole::process() {
@@ -34,27 +41,37 @@ void MainConsole::process() {
     std::regex screenCommandS("screen -s (\\w+)");
     std::smatch match;
 
+	
+	appendToDisplayHistory("\033[1;37mEnter a command: " + command);
+
     if (command == "initialize") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
     }
     else if (command == "screen") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
     }
     else if (command == "scheduler-test") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
     }
     else if (command == "scheduler-stop") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
     }
     else if (command == "report-util") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
     }
     else if (command == "clear") {
         system("cls");
+		displayHistory.clear();
         this->onEnabled();
     }
     else if (command == "exit") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
+        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
         ConsoleManager::getInstance()->exitApplication();
     }
     // Handle `screen -s <name>`
@@ -63,6 +80,7 @@ void MainConsole::process() {
         for (const auto& process : this->processTable) {
             if (process->getName() == processName) {
                 std::cout << "Process with this name already exists!\n";
+				appendToDisplayHistory("Process with this name already exists!");
                 return;
             }
         }
@@ -78,6 +96,7 @@ void MainConsole::process() {
     else if (std::regex_search(command, match, screenCommandR)) {
         String processName = match[1].str();
         std::cout << "Retrieving process: " << processName << std::endl;
+		appendToDisplayHistory("Retrieving process: " + processName);
 
         for (const auto& process : this->processTable) {
             if (process->getName() == processName) {
@@ -88,6 +107,7 @@ void MainConsole::process() {
             }
         }
         std::cerr << "Process '" << processName << "' not found\n";
+        appendToDisplayHistory("Process '" + processName + "' not found");
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {
@@ -95,6 +115,7 @@ void MainConsole::process() {
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";
+		appendToDisplayHistory("\033[1;31mError: command not recognized. Please try again");
     }
 }
 
