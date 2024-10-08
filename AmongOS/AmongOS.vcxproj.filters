@@ -11,6 +11,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{b645d90b-4128-4e9b-b085-3d1a38aac749}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scheduling">
+      <UniqueIdentifier>{355faccb-d597-4172-bfcb-5134ef8eb35c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AmongOS.cpp">
@@ -31,8 +34,11 @@
     <ClCompile Include="MainConsole.cpp">
       <Filter>Console</Filter>
     </ClCompile>
+    <ClCompile Include="IThread.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
     <ClCompile Include="Process.cpp">
-      <Filter>Console</Filter>
+      <Filter>Scheduling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +57,11 @@
     <ClInclude Include="MainConsole.h">
       <Filter>Console</Filter>
     </ClInclude>
+    <ClInclude Include="IThread.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
     <ClInclude Include="Process.h">
-      <Filter>Console</Filter>
+      <Filter>Scheduling</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
