@@ -9,6 +9,7 @@ public:
 	~IThread();
 
 	void start();
+	static void sleep(int ms);
 
 protected:
 	virtual void run() = 0;
