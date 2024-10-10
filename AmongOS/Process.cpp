@@ -1,32 +1,65 @@
 #include "Process.h"
 
-Process::Process(const String& processName, int totalLines, std::stringstream timeStamp)
+
+
+Process::Process(int pid, String name, RequirementFlags requirementFlags)
+    : pid(pid), name(name), requirementFlags(requirementFlags), commandCounter(0), currentState(READY)
 {
-	this->name = processName;
-	this->currentLine = 0;
-	this->totalLines = totalLines;
-	this->timeStamp = std::move(timeStamp);
 }
 
-String Process::getName() const
+void Process::addCommand(ICommand::CommandType commandType)
 {
-	return this->name;
+    // Implementation needed for adding a command
 }
 
-int Process::getCurrentLine() const
+void Process::executeCurrentCommand() const
 {
-	return this->currentLine;
+    this->commandList[this->commandCounter]->execute();
 }
 
-int Process::getTotalLines() const
+void Process::moveToNextLine()
 {
-	return this->totalLines;
+    this->commandCounter++;
 }
 
-const std::stringstream& Process::getTimeStamp() const
+bool Process::isFinished() const
 {
-    return this->timeStamp;
+    return this->commandCounter == this->commandList.size();
 }
 
 
+int Process::getRemainingTime() const
+{
+    // Return the remaining time for the process
+    return 0; 
+}
 
+int Process::getCommandCounter() const
+{
+    return commandCounter;
+}
+
+int Process::getPID() const
+{
+    return pid;
+}
+
+int Process::getCPUCoreId() const
+{
+    return cpuCoreID;
+}
+
+Process::ProcessState Process::getState() const
+{
+    return currentState;
+}
+
+std::string Process::getName() const
+{
+    return name;
+}
+
+void Process::test_generateRandomCommands(int limit)
+{
+    // Implementation for generating random commands
+}

@@ -126,17 +126,17 @@ void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
 }
 
 void MainConsole::listProcesses() const {
-    std::cout << "CPU utilization: 100%\n";
-    std::cout << "Cores used: 4\n";
-    std::cout << "Cores available: 0\n";
-    std::cout << "\n-------------------------------------------------------------\n";
-    std::cout << "Running Processes:\n";
-    for (const auto& process : this->processTable) {
-        std::cout << "Process Name:\t" << process->getName()
-            << "\t(" << process->getTimeStamp().str() << ")\tCore: 0\t"
-            << process->getCurrentLine() << "/" << process->getTotalLines()
-            << std::endl;
-    }
+    //std::cout << "CPU utilization: 100%\n";
+    //std::cout << "Cores used: 4\n";
+    //std::cout << "Cores available: 0\n";
+    //std::cout << "\n-------------------------------------------------------------\n";
+    //std::cout << "Running Processes:\n";
+    //for (const auto& process : this->processTable) {
+    //    std::cout << "Process Name:\t" << process->getName()
+    //        << "\t(" << process->getTimeStamp().str() << ")\tCore: 0\t"
+    //        << process->getCurrentLine() << "/" << process->getTotalLines()
+    //        << std::endl;
+    //}
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

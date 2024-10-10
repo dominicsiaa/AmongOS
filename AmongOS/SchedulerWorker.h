@@ -1,7 +1,7 @@
 #pragma once
-#include "IETThread.h"
+#include "IThread.h"
 
-class SchedulerWorker : public IETThread
+class SchedulerWorker : public IThread
 {
 public:
 	SchedulerWorker() = default;
@@ -10,6 +10,5 @@ public:
 
 private:
 	bool isRunning = true;
-
 
 };
