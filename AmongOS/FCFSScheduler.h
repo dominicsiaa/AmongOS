@@ -12,9 +12,8 @@
 
 class FCFSScheduler : public AScheduler {
 private:
-private:
     static FCFSScheduler* instance;
-    CPUCore core;
+    CPUCore core[4];
 
     FCFSScheduler() : AScheduler(FCFS, -1, "FCFSScheduler") {}
 

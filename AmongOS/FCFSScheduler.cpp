@@ -18,10 +18,11 @@ void FCFSScheduler::tick() {
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
         readyQueue.pop();
-        if (core.hasTasks()) {
-            core.addTask(process);
+        for (int i = 0; i < 4; i++) {
+            if (!core[i].hasTasks()) {
+                core[i].addTask(process);
+            }
         }
-        std::cout << "Processing task: " << process->getName() << std::endl;
     }
     else {
         std::cout << "No tasks in the ready queue." << std::endl;
