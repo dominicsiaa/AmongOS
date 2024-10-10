@@ -8,10 +8,8 @@ Process::Process(int pid, String name, RequirementFlags requirementFlags)
 
 void Process::addCommand(ICommand::CommandType commandType)
 {
-    // Implementation needed for adding a command
     std::shared_ptr<ICommand> command = ICommand::createCommand(commandType, 0);
 
-    // Check if command was successfully created
     if (command) {
         commandList.push_back(command); // Add the command to the command list
         std::cout << "Command of type " << commandType << " added to process " << name << "." << std::endl;
@@ -39,7 +37,6 @@ bool Process::isFinished() const
 
 int Process::getRemainingTime() const
 {
-    // Return the remaining time for the process
     return 0;
 }
 
@@ -71,4 +68,7 @@ std::string Process::getName() const
 void Process::test_generateRandomCommands(int limit)
 {
     // Implementation for generating random commands
+    for (int i = 0; i < limit; i++) {
+        addCommand(ICommand::PRINT);
+    }
 }
