@@ -76,38 +76,38 @@ void MainConsole::process() {
     }
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
-        String processName = match[1].str();
-        for (const auto& process : this->processTable) {
-            if (process->getName() == processName) {
-                std::cout << "Process with this name already exists!\n";
-				appendToDisplayHistory("Process with this name already exists!");
-                return;
-            }
-        }
-        std::stringstream timeStamp = createCurrentTimestamp();
-        auto process = std::make_shared<Process>(processName, 100, std::move(timeStamp));
-        this->addProcess(process);
-        auto newScreen = std::make_shared<BaseScreen>(process, processName);
+    //    String processName = match[1].str();
+    //    for (const auto& process : this->processTable) {
+    //        if (process->getName() == processName) {
+    //            std::cout << "Process with this name already exists!\n";
+				//appendToDisplayHistory("Process with this name already exists!");
+    //            return;
+    //        }
+    //    }
+    //    std::stringstream timeStamp = createCurrentTimestamp();
+    //    auto process = std::make_shared<Process>(processName, 100, std::move(timeStamp));
+    //    this->addProcess(process);
+    //    auto newScreen = std::make_shared<BaseScreen>(process, processName);
 
-        ConsoleManager::getInstance()->registerScreen(newScreen);
-        ConsoleManager::getInstance()->switchToScreen(processName);
+    //    ConsoleManager::getInstance()->registerScreen(newScreen);
+    //    ConsoleManager::getInstance()->switchToScreen(processName);
     }
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
-        String processName = match[1].str();
-        std::cout << "Retrieving process: " << processName << std::endl;
-		appendToDisplayHistory("Retrieving process: " + processName);
+  //      String processName = match[1].str();
+  //      std::cout << "Retrieving process: " << processName << std::endl;
+		//appendToDisplayHistory("Retrieving process: " + processName);
 
-        for (const auto& process : this->processTable) {
-            if (process->getName() == processName) {
-                auto newScreen = std::make_shared<BaseScreen>(process, processName);
-                ConsoleManager::getInstance()->registerScreen(newScreen);
-                ConsoleManager::getInstance()->switchToScreen(processName);
-                return;
-            }
-        }
-        std::cerr << "Process '" << processName << "' not found\n";
-        appendToDisplayHistory("Process '" + processName + "' not found");
+  //      for (const auto& process : this->processTable) {
+  //          if (process->getName() == processName) {
+  //              auto newScreen = std::make_shared<BaseScreen>(process, processName);
+  //              ConsoleManager::getInstance()->registerScreen(newScreen);
+  //              ConsoleManager::getInstance()->switchToScreen(processName);
+  //              return;
+  //          }
+  //      }
+  //      std::cerr << "Process '" << processName << "' not found\n";
+  //      appendToDisplayHistory("Process '" + processName + "' not found");
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {
@@ -126,17 +126,17 @@ void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
 }
 
 void MainConsole::listProcesses() const {
-    std::cout << "CPU utilization: 100%\n";
-    std::cout << "Cores used: 4\n";
-    std::cout << "Cores available: 0\n";
-    std::cout << "\n-------------------------------------------------------------\n";
-    std::cout << "Running Processes:\n";
-    for (const auto& process : this->processTable) {
-        std::cout << "Process Name:\t" << process->getName()
-            << "\t(" << process->getTimeStamp().str() << ")\tCore: 0\t"
-            << process->getCurrentLine() << "/" << process->getTotalLines()
-            << std::endl;
-    }
+    //std::cout << "CPU utilization: 100%\n";
+    //std::cout << "Cores used: 4\n";
+    //std::cout << "Cores available: 0\n";
+    //std::cout << "\n-------------------------------------------------------------\n";
+    //std::cout << "Running Processes:\n";
+    //for (const auto& process : this->processTable) {
+    //    std::cout << "Process Name:\t" << process->getName()
+    //        << "\t(" << process->getTimeStamp().str() << ")\tCore: 0\t"
+    //        << process->getCurrentLine() << "/" << process->getTotalLines()
+    //        << std::endl;
+    //}
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

@@ -40,6 +40,21 @@
     <ClCompile Include="Process.cpp">
       <Filter>Scheduling</Filter>
     </ClCompile>
+    <ClCompile Include="ICommand.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="AScheduler.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintCommand.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="SchedulerWorker.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalScheduler.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleManager.h">
@@ -61,6 +76,21 @@
       <Filter>Scheduling</Filter>
     </ClInclude>
     <ClInclude Include="Process.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="AScheduler.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintCommand.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="SchedulerWorker.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalScheduler.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,9 +2,7 @@
 
 AScheduler::AScheduler(SchedulingAlgorithm schedulingAlgo, int pid, String processName)
 {
-	this->schedulingAlgo = schedulingAlgo;
-	this->pid = pid;
-	this->processName = processName;
+
 }
 
 void AScheduler::addProcesss(std::shared_ptr<Process> process)
