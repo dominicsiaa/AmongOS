@@ -6,7 +6,7 @@
 class PrintCommand : public ICommand
 {
 public:
-	PrintCommand(int pid, String& toPrint);
+	PrintCommand(int pid, const String& toPrint);
 	void execute() override;
 private:
 	String toPrint;

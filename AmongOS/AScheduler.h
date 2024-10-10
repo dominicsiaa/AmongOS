@@ -1,6 +1,7 @@
 #pragma	once
 
 #include <unordered_map>
+#include <queue>
 
 #include "IThread.h"
 #include "Process.h"
@@ -26,7 +27,9 @@ public:
 
 	AScheduler(SchedulingAlgorithm schedulingAlgo, int pid, String processName);
 
-	void addProcesss(std::shared_ptr<Process> process);
+	AScheduler() = default;
+
+	virtual void addProcess(std::shared_ptr<Process> process) = 0;
 	std::shared_ptr<Process> findProcess(String processName);
 	void run() override;
 	void stop();
@@ -44,6 +47,8 @@ public:
 		int remainingTime;
 	};
 
+	virtual void tick();
 
-
+protected:
+	std::queue<std::shared_ptr<Process>> readyQueue;
 };

@@ -9,6 +9,16 @@ Process::Process(int pid, String name, RequirementFlags requirementFlags)
 void Process::addCommand(ICommand::CommandType commandType)
 {
     // Implementation needed for adding a command
+    std::shared_ptr<ICommand> command = ICommand::createCommand(commandType, 0);
+
+    // Check if command was successfully created
+    if (command) {
+        commandList.push_back(command); // Add the command to the command list
+        std::cout << "Command of type " << commandType << " added to process " << name << "." << std::endl;
+    }
+    else {
+        std::cerr << "Failed to create command of type " << commandType << " for process " << name << "." << std::endl;
+    }
 }
 
 void Process::executeCurrentCommand() const

@@ -5,7 +5,7 @@ AScheduler::AScheduler(SchedulingAlgorithm schedulingAlgo, int pid, String proce
 
 }
 
-void AScheduler::addProcesss(std::shared_ptr<Process> process)
+void AScheduler::addProcess(std::shared_ptr<Process> process)
 {
 }
 
@@ -20,4 +20,8 @@ void AScheduler::run()
 
 void AScheduler::stop()
 {
+}
+
+// Process the next task in the ready queue
+void AScheduler::tick() {
 }

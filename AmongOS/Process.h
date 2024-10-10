@@ -28,6 +28,7 @@ public:
     };
 
     Process(int pid, String name, RequirementFlags requirementFlags);
+    ~Process() = default;
 
     void addCommand(ICommand::CommandType commandType);
     void executeCurrentCommand() const;

@@ -12,13 +12,14 @@ public:
 	};
 
 	ICommand(int pid, CommandType commandType);
-	CommandType getCommandType();
-	virtual void execute();
+    virtual ~ICommand() = default;
+	static std::shared_ptr<ICommand> createCommand(CommandType commandType, int pid);
+    CommandType getCommandType() const;
+
+    virtual void execute() = 0;
 
 protected:
 	int pid;
 	CommandType commandType;
 
 };
-
-#pragma once

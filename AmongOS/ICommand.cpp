@@ -1,17 +1,19 @@
 #include "ICommand.h"
-
+#include "PrintCommand.h" // Include other command headers as needed
 
 ICommand::ICommand(int pid, CommandType commandType)
-{
-	this->pid = pid;
-	this->commandType = commandType;
+    : pid(pid), commandType(commandType) {}
+
+ICommand::CommandType ICommand::getCommandType() const {
+    return commandType;
 }
 
-ICommand::CommandType ICommand::getCommandType()
-{
-	return CommandType();
-}
-
-void ICommand::execute()
-{
+// Static factory method implementation
+std::shared_ptr<ICommand> ICommand::createCommand(CommandType commandType, int pid) {
+    switch (commandType) {
+        case PRINT:
+            return std::make_shared<PrintCommand>(pid, std::string("Default Print Message"));
+        default:
+            return nullptr;
+    }
 }
