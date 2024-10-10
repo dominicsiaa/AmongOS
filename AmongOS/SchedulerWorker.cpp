@@ -1,4 +1,5 @@
 #include "SchedulerWorker.h"
+
 #include "GlobalScheduler.h"
 
 void SchedulerWorker::update(bool isRunning)

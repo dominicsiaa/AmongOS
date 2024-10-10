@@ -1,12 +1,7 @@
 #pragma once
 #include "typedefRepo.h"
-#include "ICommand.h"
-#include <vector>
-#include <memory>
-#include <string> 
-#include <sstream>
 
-using String = std::string;
+#include <sstream>
 
 class Process
 {
@@ -15,7 +10,7 @@ public:
     {
         bool requireFiles;
         int numFiles;
-        bool requireMemory;
+        bool requireMmeory;
         int memoryRequired;
     };
 
@@ -28,9 +23,8 @@ public:
     };
 
     Process(int pid, String name, RequirementFlags requirementFlags);
-
-    void addCommand(ICommand::CommandType commandType);
-    void executeCurrentCommand() const;
+    void addCommand(ICommand::CommanType commandType);
+    void executeCurrentCommand(); const;
     void moveToNextLine();
 
     bool isFinished() const;
@@ -39,20 +33,32 @@ public:
     int getPID() const;
     int getCPUCoreId () const;
     ProcessState getState() const;
-    String getName() const;
+    String getName() cont;
 
     void test_generateRandomCommands(int limit);
 
+    //~Process() = default;
+
+    //String getName() const;
+    //int getCurrentLine() const;
+    //int getTotalLines() const;
+    //const std::stringstream& getTimeStamp() const;
+   
 private:
+    //String name;         
+    //int currentLine;         
+    //int totalLines;
+    //std::stringstream timeStamp;
+
     int pid;
     String name;
     typedef std::vector<std::shared_ptr<ICommand>> CommandList;
     CommandList commandList;
 
-    int commandCounter = 0;
+    int commandCounter;
     int cpuCoreID = -1;
     RequirementFlags requirementFlags;
     ProcessState currentState;
 
-    //friend class ResourceEmulator;
+    friend class ResourceEmulator;
 };

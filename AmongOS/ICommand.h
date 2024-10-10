@@ -1,6 +1,6 @@
 #pragma once
-
-#include "IThread.h"
+#include "GlobalConfig.h"
+#include "IETThread.h"
 
 class ICommand
 {
@@ -12,7 +12,7 @@ public:
 		PRINT
 	};
 
-	ICommand(int pid, CommandType commandType);
+	ICommand(int pid, CommandType, commandType);
 	CommandType getCommandType();
 	virtual void execute();
 
@@ -22,3 +22,8 @@ protected:
 
 };
 
+
+inline ICommand::CommandType ICommand::getCommandType()
+{
+	return this->commandType;
+}

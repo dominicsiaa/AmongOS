@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include "IThread.h"
+#include "IETThread.h"
 #include "Process.h"
 #include "TypedefRepo.h"
 
@@ -12,7 +12,7 @@ static const String FCFS_SCHEDULER_NAME = "FCFSScheduler";
 static const String SJF_NOPREEMPT_SCHEDULER_NAME = "SJF-NoPreempt-Scheduler";
 static const String SJF_PREEMPT_SCHEDULER_NAME = "SJF-Preempt-Scheduler";
 
-class AScheduler : public IThread
+class AScheduler : public IETThread
 {
 public:
 	enum SchedulingAlgorithm
@@ -20,7 +20,7 @@ public:
 		DEBUG,
 		FCFS,
 		SHORTEST_JOB_FIRST_NONPREEMPTIVE,
-		SHORTEST_JOB_FIRST_PREEMPTIVE,
+		SHORTEST_JOB_FIRST_PREEMPTIVE
 		ROUND_ROBIN
 	};
 
@@ -42,6 +42,7 @@ public:
 		int lineCounter;
 		int linesOfCode;
 		int remainingTime;
+
 	};
 
 

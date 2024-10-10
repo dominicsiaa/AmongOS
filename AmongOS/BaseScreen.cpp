@@ -68,7 +68,7 @@ void BaseScreen::printProcessInfo() const
 
 	//TODO: Im just guessing here
 	std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
-	//std::cout << "Process Current Line of Instruction: " << this->attachedProcess->getCurrentLine() << std::endl;
-	//std::cout << "Process Total Lines of Instruction: " << this->attachedProcess->getTotalLines() << std::endl;
+	std::cout << "Process Current Line of Instruction: " << this->attachedProcess->getCurrentLine() << std::endl;
+	std::cout << "Process Total Lines of Instruction: " << this->attachedProcess->getTotalLines() << std::endl;
 	std::cout << "Timestamp: " << timeStream.str() << std::endl;
 }
