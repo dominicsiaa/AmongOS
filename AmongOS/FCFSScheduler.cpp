@@ -85,7 +85,7 @@ void FCFSScheduler::callScreenLS() {
         oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
 
 		std::cout << process->getName() << "   ";
-		std::cout << oss.str() << "   ";
+        std::cout << "(" << oss.str() << ")   ";
 		std::cout << "Core: " << process->getCPUCoreId() << "   ";
         std::cout << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
 	}
