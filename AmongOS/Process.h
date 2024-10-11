@@ -5,6 +5,7 @@
 #include <memory>
 #include <string> 
 #include <sstream>
+#include <chrono>
 
 using String = std::string;
 
@@ -33,6 +34,9 @@ public:
     void addCommand(ICommand::CommandType commandType);
     void executeCurrentCommand() const;
     void moveToNextLine();
+    void setStartTime();
+
+    std::chrono::time_point<std::chrono::system_clock> getStartTime() const;
 
     bool isFinished() const;
     int getRemainingTime() const;
@@ -57,6 +61,7 @@ private:
     int cpuCoreID = -1;
     RequirementFlags requirementFlags;
     ProcessState currentState;
+    std::chrono::time_point<std::chrono::system_clock> startTime;
 
     //friend class ResourceEmulator;
 };

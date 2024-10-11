@@ -28,6 +28,7 @@ public:
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);
 	void addFinished(std::shared_ptr<Process> process);
+	void callScreenLS();
 	void tick() override;
 	void run() override;
 

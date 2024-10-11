@@ -1,5 +1,6 @@
 #include "ConsoleManager.h"
 #include "MainConsole.h"
+#include "FCFSScheduler.h"
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -116,7 +117,7 @@ void MainConsole::process() {
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {
-        listProcesses();
+		FCFSScheduler::getInstance()->callScreenLS();
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";

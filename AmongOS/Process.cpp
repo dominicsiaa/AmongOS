@@ -4,6 +4,8 @@
 #include <chrono>
 #include <iomanip>
 
+//TODO: update process state
+
 
 Process::Process(int pid, String name, RequirementFlags requirementFlags)
     : pid(pid), name(name), requirementFlags(requirementFlags), commandCounter(0), currentState(READY)
@@ -16,10 +18,10 @@ void Process::addCommand(ICommand::CommandType commandType)
 
     if (command) {
         commandList.push_back(command); // Add the command to the command list
-        std::cout << "Command of type " << commandType << " added to process " << name << "." << std::endl;
+        //std::cout << "Command of type " << commandType << " added to process " << name << "." << std::endl;
     }
     else {
-        std::cerr << "Failed to create command of type " << commandType << " for process " << name << "." << std::endl;
+        //std::cerr << "Failed to create command of type " << commandType << " for process " << name << "." << std::endl;
     }
 }
 
@@ -116,4 +118,12 @@ void Process::test_generateRandomCommands(int limit)
     for (int i = 0; i < limit; i++) {
         addCommand(ICommand::PRINT);
     }
+}
+
+void Process::setStartTime() {
+	startTime = std::chrono::system_clock::now();
+}
+
+std::chrono::time_point<std::chrono::system_clock> Process::getStartTime() const{
+	return startTime;
 }

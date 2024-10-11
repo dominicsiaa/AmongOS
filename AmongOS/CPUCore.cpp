@@ -4,7 +4,7 @@
 CPUCore* CPUCore::instance = nullptr;
 
 CPUCore::CPUCore(int id) : coreID(id) {
-    std::cout << "CPU Core " << coreID << " initialized." << std::endl;
+    //std::cout << "CPU Core " << coreID << " initialized." << std::endl;
 }
 
 CPUCore* CPUCore::getInstance(int id) {
@@ -16,7 +16,8 @@ CPUCore* CPUCore::getInstance(int id) {
 
 void CPUCore::addTask(const std::shared_ptr<Process>& process) {
     currProcess = process;
-    std::cout << "Task '" << currProcess->getName() << "' added to CPU Core " << coreID << "." << std::endl;
+    process->setStartTime();
+    //astd::cout << "Task '" << currProcess->getName() << "' added to CPU Core " << coreID << "." << std::endl;
 }
 
 void CPUCore::processTask() {
@@ -44,7 +45,7 @@ bool CPUCore::hasTasks() const {
 
 void CPUCore::clearCurrentProcess() {
     if (currProcess) {
-        std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
+        //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
 		FCFSScheduler::getInstance()->addFinished(currProcess);
         currProcess.reset();
     }

@@ -29,11 +29,11 @@ void FCFSScheduler::initialize()
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
     readyQueue.push(process);
-    std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
+    //std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
 }
 
 void FCFSScheduler::run() {
-	std::cout << "FCFSScheduler running." << std::endl;
+	//std::cout << "FCFSScheduler running." << std::endl;
 	while (!readyQueue.empty()) {
 		tick();
 	}
@@ -64,10 +64,47 @@ void FCFSScheduler::destroy()
 
 void FCFSScheduler::addCore(std::shared_ptr<CPUCore> core) {
     this->core.push_back(core);
-    std::cout << "Core " << core->getCoreID() << " added to FCFSScheduler." << std::endl;
+    //std::cout << "Core " << core->getCoreID() << " added to FCFSScheduler." << std::endl;
 }
 
 void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
+    ongoingProcesses.remove(process);
 	finishedProcesses.push_back(process);
-	std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
+	//std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
+}
+
+void FCFSScheduler::callScreenLS() {
+	std::cout << "-------------------------------------" << std::endl;
+	std::cout << "Running processes: " << std::endl;
+	for (auto process : ongoingProcesses) {
+        auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
+        std::tm buf;
+        localtime_s(&buf, &in_time_t);
+
+        std::ostringstream oss;
+        oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
+
+		std::cout << process->getName() << "   ";
+		std::cout << oss.str() << "   ";
+		std::cout << "Core: " << process->getCPUCoreId() << "   ";
+        std::cout << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
+	}
+    std::cout << std::endl;
+
+	std::cout << "Finished processes: " << std::endl;
+	for (auto process : finishedProcesses) {
+		auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
+		std::tm buf;
+		localtime_s(&buf, &in_time_t);
+
+		std::ostringstream oss;
+		oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
+
+		std::cout << process->getName() << "   ";
+		std::cout << "(" << oss.str() << ")   ";
+		std::cout << "Finished   ";
+		std::cout << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
+	}
+
+	std::cout << "-------------------------------------" << std::endl << std::endl;
 }
