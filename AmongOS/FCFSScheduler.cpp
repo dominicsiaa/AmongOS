@@ -74,9 +74,9 @@ void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
 }
 
 void FCFSScheduler::callScreenLS() {
-	std::cout << "-------------------------------------" << std::endl;
-	std::cout << "Running processes: " << std::endl;
-	for (auto process : ongoingProcesses) {
+    std::cout << "-------------------------------------" << std::endl;
+    std::cout << "Running processes: " << std::endl;
+    for (auto process : ongoingProcesses) {
         auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
         std::tm buf;
         localtime_s(&buf, &in_time_t);
@@ -84,27 +84,53 @@ void FCFSScheduler::callScreenLS() {
         std::ostringstream oss;
         oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
 
-		std::cout << process->getName() << "   ";
-        std::cout << "(" << oss.str() << ")   ";
-		std::cout << "Core: " << process->getCPUCoreId() << "   ";
-        std::cout << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
-	}
+        std::string formattedTime = oss.str();
+        std::cout << process->getName() << "   ";
+
+        std::cout << "(";
+        for (char c : formattedTime) {
+            if (c == '/' || c == ':') {
+                std::cout << "\033[0m" << c << "\033[33m"; 
+            }
+            else {
+                std::cout << "\033[33m" << c; 
+            }
+        }
+        std::cout << "\033[0m)   "; 
+        std::cout << "Core: " << "\033[33m" << process->getCPUCoreId() << "\033[0m" << "   ";
+        std::cout << "\033[33m" << process->getCommandCounter() << "\033[0m" << " / "; 
+        std::cout << "\033[33m" << process->getTotalCommands() << "\033[0m" << std::endl; 
+    }
     std::cout << std::endl;
 
-	std::cout << "Finished processes: " << std::endl;
-	for (auto process : finishedProcesses) {
-		auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
-		std::tm buf;
-		localtime_s(&buf, &in_time_t);
+    std::cout << "Finished processes: " << std::endl;
+    for (auto process : finishedProcesses) {
+        auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
+        std::tm buf;
+        localtime_s(&buf, &in_time_t);
 
-		std::ostringstream oss;
-		oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
+        std::ostringstream oss;
+        oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
 
-		std::cout << process->getName() << "   ";
-		std::cout << "(" << oss.str() << ")   ";
-		std::cout << "Finished   ";
-		std::cout << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
-	}
+        std::string formattedTime = oss.str();
+        std::cout << process->getName() << "   ";
 
-	std::cout << "-------------------------------------" << std::endl << std::endl;
+    
+        std::cout << "(";
+        for (char c : formattedTime) {
+            if (c == '/' || c == ':') {
+                std::cout << "\033[0m" << c << "\033[33m"; 
+            }
+            else {
+                std::cout << "\033[33m" << c; 
+            }
+        }
+        std::cout << "\033[0m)   ";
+
+        std::cout << "Finished   ";
+        std::cout << "\033[33m" << process->getCommandCounter() << "\033[0m" << " / "; 
+        std::cout << "\033[33m" << process->getTotalCommands() << "\033[0m" << std::endl; 
+    }
+
+    std::cout << "-------------------------------------" << std::endl << std::endl;
 }
