@@ -5,6 +5,7 @@ class SchedulerWorker : public IThread
 {
 public:
 	SchedulerWorker() = default;
+	~SchedulerWorker() = default;
 	void update(bool isRunning);
 	void run() override;
 

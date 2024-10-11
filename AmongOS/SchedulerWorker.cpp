@@ -12,5 +12,6 @@ void SchedulerWorker::run()
 	while (this->isRunning)
 	{
 		FCFSScheduler::getInstance()->tick();
+		FCFSScheduler::getInstance()->sleep(200);
 	}
 }

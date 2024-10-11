@@ -76,38 +76,43 @@ void MainConsole::process() {
     }
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
-    //    String processName = match[1].str();
-    //    for (const auto& process : this->processTable) {
-    //        if (process->getName() == processName) {
-    //            std::cout << "Process with this name already exists!\n";
-				//appendToDisplayHistory("Process with this name already exists!");
-    //            return;
-    //        }
-    //    }
-    //    std::stringstream timeStamp = createCurrentTimestamp();
-    //    auto process = std::make_shared<Process>(processName, 100, std::move(timeStamp));
-    //    this->addProcess(process);
-    //    auto newScreen = std::make_shared<BaseScreen>(process, processName);
+        String processName = match[1].str();
+        for (const auto& process : this->processTable) {
+            if (process->getName() == processName) {
+                std::cout << "Process with this name already exists!\n";
+				appendToDisplayHistory("Process with this name already exists!");
+                return;
+            }
+        }
+        std::stringstream timeStamp = createCurrentTimestamp();
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+		flags.requireMemory = true;
+        flags.memoryRequired = 1000;
+        auto process = std::make_shared<Process>(0, processName, flags);
+        this->addProcess(process);
+        auto newScreen = std::make_shared<BaseScreen>(process, processName);
 
-    //    ConsoleManager::getInstance()->registerScreen(newScreen);
-    //    ConsoleManager::getInstance()->switchToScreen(processName);
+        ConsoleManager::getInstance()->registerScreen(newScreen);
+        ConsoleManager::getInstance()->switchToScreen(processName);
     }
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
-  //      String processName = match[1].str();
-  //      std::cout << "Retrieving process: " << processName << std::endl;
-		//appendToDisplayHistory("Retrieving process: " + processName);
+        String processName = match[1].str();
+        std::cout << "Retrieving process: " << processName << std::endl;
+		appendToDisplayHistory("Retrieving process: " + processName);
 
-  //      for (const auto& process : this->processTable) {
-  //          if (process->getName() == processName) {
-  //              auto newScreen = std::make_shared<BaseScreen>(process, processName);
-  //              ConsoleManager::getInstance()->registerScreen(newScreen);
-  //              ConsoleManager::getInstance()->switchToScreen(processName);
-  //              return;
-  //          }
-  //      }
-  //      std::cerr << "Process '" << processName << "' not found\n";
-  //      appendToDisplayHistory("Process '" + processName + "' not found");
+        for (const auto& process : this->processTable) {
+            if (process->getName() == processName) {
+                auto newScreen = std::make_shared<BaseScreen>(process, processName);
+                ConsoleManager::getInstance()->registerScreen(newScreen);
+                ConsoleManager::getInstance()->switchToScreen(processName);
+                return;
+            }
+        }
+        std::cerr << "Process '" << processName << "' not found\n";
+        appendToDisplayHistory("Process '" + processName + "' not found");
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {

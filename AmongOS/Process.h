@@ -39,8 +39,11 @@ public:
     int getCommandCounter() const;
     int getPID() const;
     int getCPUCoreId() const;
+    int getTotalCommands() const;
     ProcessState getState() const;
     String getName() const;
+
+    void setCPUCoreId(int coreId);
 
     void test_generateRandomCommands(int limit);
 

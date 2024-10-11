@@ -1,12 +1,16 @@
 #pragma once
+#include "IThread.h"
+#include "CPUCore.h"
 
-class CPUCoreWorker {
+class CPUCoreWorker : public IThread
+{
 public:
-    CPUCoreWorker();
+    CPUCoreWorker(std::shared_ptr<CPUCore> core);
 
     void update(bool isRunning);
-    void run();
+    void run() override;
 
 private:
     bool isRunning;
+    std::shared_ptr<CPUCore> core;
 };

@@ -1,5 +1,9 @@
 #include "PrintCommand.h"
 #include "IThread.h"
+#include <fstream>
+#include <sstream>
+#include <filesystem> 
+
 //#include "MessageBuffer.h"
 
 
@@ -11,8 +15,19 @@ PrintCommand::PrintCommand(int pid, const String& toPrint) : ICommand(pid, PRINT
 
 void PrintCommand::execute()
 {
-	std::cout << "PID: " << pid << ", Message: " << toPrint << std::endl;
+    std::string folder = "temp"; // Specify the folder name
+    std::ostringstream filename;
+    filename << folder << "/pid" << pid << ".txt"; // Construct the filename with folder
 
-	//std::stringstream msg; msg << String("PID ") << this->pid << ":" << this->toPrint << std::endl;
-	//MessageBuffer::log(msg.str());
+    // Ensure the folder exists
+    std::filesystem::create_directories(folder);
+
+    std::ofstream outFile(filename.str(), std::ios_base::out | std::ios_base::app); // Open file in append mode, create if it doesn't exist
+    if (outFile.is_open()) {
+        outFile << "\"" << toPrint << "\"" <<  std::endl;
+        outFile.close();
+    }
+    else {
+        std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
+    }
 }

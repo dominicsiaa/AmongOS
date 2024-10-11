@@ -5,9 +5,8 @@
 
 class CPUCore {
 public:
+    CPUCore(int id);
     static CPUCore* getInstance(int id);
-
-    CPUCore() : coreID(-1) {}
 
     void addTask(const std::shared_ptr<Process>& process);
     void processTask();
@@ -17,7 +16,6 @@ public:
     void tick();
 
 private:
-    CPUCore(int id);
     static CPUCore* instance;
     int coreID;
     std::shared_ptr<Process> currProcess;

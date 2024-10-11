@@ -1,4 +1,5 @@
 #include "CPUCore.h"
+#include "FCFSScheduler.h"
 
 CPUCore* CPUCore::instance = nullptr;
 
@@ -19,8 +20,12 @@ void CPUCore::addTask(const std::shared_ptr<Process>& process) {
 }
 
 void CPUCore::processTask() {
+	if (!currProcess) {
+		//std::cout << "No task to process." << std::endl;
+		return;
+	}
     if (currProcess->isFinished()) {
-        std::cout << "Finished task: " << currProcess->getName() << std::endl;
+        //std::cout << "Finished task: " << currProcess->getName() << std::endl;
 
         clearCurrentProcess();
         return;
@@ -40,6 +45,7 @@ bool CPUCore::hasTasks() const {
 void CPUCore::clearCurrentProcess() {
     if (currProcess) {
         std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
+		FCFSScheduler::getInstance()->addFinished(currProcess);
         currProcess.reset();
     }
 }

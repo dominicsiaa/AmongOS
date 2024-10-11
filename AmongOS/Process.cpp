@@ -1,4 +1,8 @@
 #include "Process.h"
+#include <fstream>
+#include <filesystem>
+#include <chrono>
+#include <iomanip>
 
 
 Process::Process(int pid, String name, RequirementFlags requirementFlags)
@@ -8,7 +12,7 @@ Process::Process(int pid, String name, RequirementFlags requirementFlags)
 
 void Process::addCommand(ICommand::CommandType commandType)
 {
-    std::shared_ptr<ICommand> command = ICommand::createCommand(commandType, 0);
+    std::shared_ptr<ICommand> command = ICommand::createCommand(commandType, pid);
 
     if (command) {
         commandList.push_back(command); // Add the command to the command list
@@ -21,6 +25,37 @@ void Process::addCommand(ICommand::CommandType commandType)
 
 void Process::executeCurrentCommand() const
 {
+    std::string folder = "temp"; // Specify the folder name
+    std::ostringstream filename;
+    filename << folder << "/pid" << pid << ".txt"; // Construct the filename with folder
+
+    // Ensure the folder exists
+    std::filesystem::create_directories(folder);
+
+    std::ofstream outFile(filename.str(), std::ios_base::out | std::ios_base::app); // Open file in append mode, create if it doesn't exist
+    if (outFile.is_open()) {
+        // Check if the file is empty to write the process name
+        std::ifstream inFile(filename.str());
+        if (inFile.peek() == std::ifstream::traits_type::eof()) {
+            outFile << "Process name: " << name << std::endl;
+            outFile << "Logs:" << std::endl << std::endl;
+        }
+        inFile.close();
+
+        // Get current time
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        std::tm buf;
+        localtime_s(&buf, &in_time_t);
+
+        // Write log entry
+        outFile << "(" << std::put_time(&buf, "%m/%d/%Y %H:%M:%S") << ") Core: " << cpuCoreID << " "; // Replace "CoreIDHere" with actual core ID
+        outFile.close();
+    }
+    else {
+        std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
+    }
+
     this->commandList[this->commandCounter]->execute();
 }
 
@@ -55,6 +90,11 @@ int Process::getCPUCoreId() const
     return cpuCoreID;
 }
 
+int Process::getTotalCommands() const
+{
+	return commandList.size();
+}
+
 Process::ProcessState Process::getState() const
 {
     return currentState;
@@ -63,6 +103,11 @@ Process::ProcessState Process::getState() const
 std::string Process::getName() const
 {
     return name;
+}
+
+void Process::setCPUCoreId(int coreId)
+{
+	cpuCoreID = coreId;
 }
 
 void Process::test_generateRandomCommands(int limit)

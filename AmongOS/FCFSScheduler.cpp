@@ -1,12 +1,30 @@
 #include "FCFSScheduler.h"
 
-FCFSScheduler* FCFSScheduler::instance = nullptr;
+FCFSScheduler::FCFSScheduler() : AScheduler(FCFS, -1, "FCFSScheduler") {
+    //create 10 processes on startup
+    for (int i = 0; i < 10; i++) {
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+        flags.memoryRequired = 1000;
+        flags.requireMemory = true;
 
-FCFSScheduler* FCFSScheduler::getInstance() {
-    if (instance == nullptr) {
-        instance = new FCFSScheduler();
+        auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
+        process->test_generateRandomCommands(100);
+        this->addProcess(process);
     }
-    return instance;
+
+}
+
+FCFSScheduler* FCFSScheduler::sharedInstance = nullptr;
+FCFSScheduler* FCFSScheduler::getInstance()
+{
+	return sharedInstance;
+}
+
+void FCFSScheduler::initialize()
+{
+	sharedInstance = new FCFSScheduler();
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
@@ -14,17 +32,42 @@ void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
     std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
 }
 
+void FCFSScheduler::run() {
+	std::cout << "FCFSScheduler running." << std::endl;
+	while (!readyQueue.empty()) {
+		tick();
+	}
+}
+
 void FCFSScheduler::tick() {
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
-        readyQueue.pop();
-        for (int i = 0; i < 4; i++) {
-            if (!core[i].hasTasks()) {
-                core[i].addTask(process);
+
+        //TODO: fix ready queue logic
+        for (int i = 0; i < core.size(); i++) {
+            if (!core[i]->hasTasks()) {
+                process->setCPUCoreId(i);
+				ongoingProcesses.push_back(process);
+                core[i]->addTask(process);
+                readyQueue.pop();
+                break;
             }
         }
+    } else {
+        //std::cout << "No tasks in the ready queue." << std::endl;
     }
-    else {
-        std::cout << "No tasks in the ready queue." << std::endl;
-    }
+}
+void FCFSScheduler::destroy()
+{
+	delete sharedInstance;
+}
+
+void FCFSScheduler::addCore(std::shared_ptr<CPUCore> core) {
+    this->core.push_back(core);
+    std::cout << "Core " << core->getCoreID() << " added to FCFSScheduler." << std::endl;
+}
+
+void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
+	finishedProcesses.push_back(process);
+	std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
 }

@@ -14,6 +14,9 @@
     <Filter Include="Scheduling">
       <UniqueIdentifier>{355faccb-d597-4172-bfcb-5134ef8eb35c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scheduling\temp">
+      <UniqueIdentifier>{0bd54233-8bfc-4215-9709-420a58fe03d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AmongOS.cpp">
@@ -55,6 +58,15 @@
     <ClCompile Include="GlobalScheduler.cpp">
       <Filter>Scheduling</Filter>
     </ClCompile>
+    <ClCompile Include="CPUCore.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="CPUCoreWorker.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="FCFSScheduler.cpp">
+      <Filter>Scheduling</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleManager.h">
@@ -91,6 +103,15 @@
       <Filter>Scheduling</Filter>
     </ClInclude>
     <ClInclude Include="GlobalScheduler.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="FCFSScheduler.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUCore.h">
+      <Filter>Scheduling</Filter>
+    </ClInclude>
+    <ClInclude Include="CPUCoreWorker.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
   </ItemGroup>
