@@ -1,7 +1,19 @@
 #include "FCFSScheduler.h"
 
-FCFSScheduler::FCFSScheduler() : AScheduler(FCFS, -1, "FCFSScheduler") {
-    //create 10 processes on startup
+FCFSScheduler::FCFSScheduler(int numCores) : AScheduler(FCFS, -1, "FCFSScheduler") {
+
+    this->numCores = numCores;
+    for (int i = 0; i < numCores; i++)
+    {
+        std::shared_ptr<CPUCore> core = std::make_shared<CPUCore>(i);
+        this->addCore(core);
+
+        std::shared_ptr<CPUCoreWorker> worker = std::make_shared<CPUCoreWorker>(core);
+        this->workers.push_back(worker);
+        worker->update(true);
+    }
+
+	//create 10 processes on startup
     for (int i = 0; i < 10; i++) {
         Process::RequirementFlags flags;
         flags.requireFiles = false;
@@ -22,18 +34,16 @@ FCFSScheduler* FCFSScheduler::getInstance()
 	return sharedInstance;
 }
 
-void FCFSScheduler::initialize()
+void FCFSScheduler::initialize(int numCores)
 {
-	sharedInstance = new FCFSScheduler();
+	sharedInstance = new FCFSScheduler(numCores);
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
     readyQueue.push(process);
-    //std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
 }
 
 void FCFSScheduler::run() {
-	//std::cout << "FCFSScheduler running." << std::endl;
 	while (!readyQueue.empty()) {
 		tick();
 	}
@@ -134,4 +144,3 @@ void FCFSScheduler::callScreenLS() {
 
     std::cout << "-------------------------------------" << std::endl << std::endl;
 }
-s

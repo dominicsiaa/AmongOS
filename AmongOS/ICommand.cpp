@@ -12,7 +12,7 @@ ICommand::CommandType ICommand::getCommandType() const {
 std::shared_ptr<ICommand> ICommand::createCommand(CommandType commandType, int pid) {
     switch (commandType) {
         case PRINT:
-            return std::make_shared<PrintCommand>(pid, std::string("Default Print Message"));
+            return std::make_shared<PrintCommand>(pid, std::string("Hello world from Process" + std::to_string(pid)));
         default:
             return nullptr;
     }

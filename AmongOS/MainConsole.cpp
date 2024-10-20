@@ -1,13 +1,15 @@
 #include "ConsoleManager.h"
 #include "MainConsole.h"
-#include "FCFSScheduler.h"
 #include <iostream>
+#include <fstream>
 #include <regex>
 #include <sstream>
 #include <chrono>
 #include <ctime>
 
-MainConsole::MainConsole() : AConsole("MainConsole") {}
+MainConsole::MainConsole() : AConsole("MainConsole") {
+    this->isInitialized = false;
+}
 
 std::string displayHistory;
 
@@ -41,14 +43,93 @@ void MainConsole::process() {
     std::regex screenCommandR("screen -r (\\w+)");
     std::regex screenCommandS("screen -s (\\w+)");
     std::smatch match;
-
 	
 	appendToDisplayHistory("\033[1;37mEnter a command: " + command);
 
-    if (command == "initialize") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
+    // Handle `exit` command
+    if (command == "exit") {
+        std::cout << "\033[1;32mExiting application...\n";
+        appendToDisplayHistory("\033[1;32mExiting application...");
+
+        ConsoleManager::getInstance()->exitApplication();
+        this->schedulerWorker.update(false);
+
+    	return;
     }
+
+    // Handle `initialize` command
+    if (this->isInitialized == false)
+    {
+        if (command == "initialize") {
+            try
+            {
+                std::ifstream configFile("config.txt");
+                if (!configFile.is_open()) {
+                    std::cerr << "\033[1;31mError: Could not open config.txt\n";
+                    appendToDisplayHistory("\033[1;31mError: Could not open config.txt");
+                    return;
+                }
+
+                std::unordered_map<String, String> configMap;
+                String key;
+                String value;
+
+                while (configFile >> key >> value) {
+                    configMap[key] = value;
+                }
+
+                configFile.close();
+
+                this->config.num_cpu = std::stoul(configMap["num-cpu"]);
+                if (this->config.num_cpu < 1 || this->config.num_cpu > 128) {
+                    throw std::out_of_range("num-cpu must be between 1 and 128");
+                }
+
+                this->config.scheduler = configMap["scheduler"];
+                if (this->config.scheduler != "\"fcfs\"" && this->config.scheduler != "\"rr\"") {
+                    throw std::invalid_argument("Scheduler must be 'fcfs' or 'rr'");
+                }
+
+                this->config.quantum_cycles = std::stoul(configMap["quantum-cycles"]);
+                this->config.batch_process_freq = std::stoul(configMap["batch-process-freq"]);
+                this->config.min_ins = std::stoul(configMap["min-ins"]);
+                this->config.max_ins = std::stoul(configMap["max-ins"]);
+                this->config.delays_per_exec = std::stoul(configMap["delays-per-exec"]);
+
+                FCFSScheduler::initialize(this->config.num_cpu);
+                this->schedulerWorker.IThread::start();
+                this->schedulerWorker.update(true);
+
+                this->isInitialized = true;
+                std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
+
+                //std::cout << "\033[1;32m" << "Number of CPUs: " << this->config.num_cpu << "\n";
+                //std::cout << "\033[1;32m" << "Scheduler: " << this->config.scheduler << "\n";
+                //std::cout << "\033[1;32m" << "Quantum Cycles: " << this->config.quantum_cycles << "\n";
+                //std::cout << "\033[1;32m" << "Batch Process Frequency: " << this->config.batch_process_freq << "\n";
+                //std::cout << "\033[1;32m" << "Minimum Instructions: " << this->config.min_ins << "\n";
+                //std::cout << "\033[1;32m" << "Maximum Instructions: " << this->config.max_ins << "\n";
+                //std::cout << "\033[1;32m" << "Delays per Execution: " << this->config.delays_per_exec << "\n";
+
+            	appendToDisplayHistory("\033[1;32mSuccessfully initialized AmongOS");
+            }
+            catch (const std::exception& e) {
+				std::cerr << "\033[1;31mError: " << e.what() << "\n";
+				appendToDisplayHistory("\033[1;31mError: " + std::string(e.what()));
+			}
+        }
+        else {
+			std::cout << "\033[1;31m" << "Error: System not initialized. Please run 'initialize' command\n";
+			appendToDisplayHistory("\033[1;31mError: System not initialized. Please run 'initialize' command");
+		}
+        return;
+    }
+
+    // Handle all other commands
+    if (command == "initialize") {
+		std::cout << "\033[1;32m" << "System already initialized\n";
+		appendToDisplayHistory("\033[1;32mSystem already initialized");
+	}
     else if (command == "screen") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
         appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
@@ -70,11 +151,7 @@ void MainConsole::process() {
 		displayHistory.clear();
         this->onEnabled();
     }
-    else if (command == "exit") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
-        ConsoleManager::getInstance()->exitApplication();
-    }
+
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
         String processName = match[1].str();
@@ -129,20 +206,6 @@ void MainConsole::display() {}
 
 void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
     this->processTable.push_back(newProcess);
-}
-
-void MainConsole::listProcesses() const {
-    //std::cout << "CPU utilization: 100%\n";
-    //std::cout << "Cores used: 4\n";
-    //std::cout << "Cores available: 0\n";
-    //std::cout << "\n-------------------------------------------------------------\n";
-    //std::cout << "Running Processes:\n";
-    //for (const auto& process : this->processTable) {
-    //    std::cout << "Process Name:\t" << process->getName()
-    //        << "\t(" << process->getTimeStamp().str() << ")\tCore: 0\t"
-    //        << process->getCurrentLine() << "/" << process->getTotalLines()
-    //        << std::endl;
-    //}
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

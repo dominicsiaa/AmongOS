@@ -32,10 +32,6 @@ public:
 	virtual void addProcess(std::shared_ptr<Process> process) = 0;
 	std::shared_ptr<Process> findProcess(String processName);
 	void run() override;
-	void stop();
-
-	virtual void init() = 0;
-	virtual void execute() = 0;
 
 	struct ProcessInfo
 	{

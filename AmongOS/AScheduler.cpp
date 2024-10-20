@@ -18,10 +18,5 @@ void AScheduler::run()
 {
 }
 
-void AScheduler::stop()
-{
-}
-
-// Process the next task in the ready queue
 void AScheduler::tick() {
 }

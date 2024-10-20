@@ -115,4 +115,7 @@
       <Filter>Scheduling</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
+  </ItemGroup>
 </Project>
