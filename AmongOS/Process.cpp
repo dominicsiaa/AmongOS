@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <chrono>
 #include <iomanip>
+#include <random>
 
 //TODO: update process state
 
@@ -66,9 +67,14 @@ void Process::moveToNextLine()
     this->commandCounter++;
 }
 
-bool Process::isFinished() const
+bool Process::isFinished()
 {
-    return this->commandCounter == this->commandList.size();
+    if(this->commandCounter == this->commandList.size())
+    {
+        this->currentState = FINISHED;
+        return true;
+    }
+    return false;
 }
 
 
@@ -112,10 +118,15 @@ void Process::setCPUCoreId(int coreId)
 	cpuCoreID = coreId;
 }
 
-void Process::test_generateRandomCommands(int limit)
+void Process::generateDummyCommands(unsigned int min, unsigned int max)
 {
-    // Implementation for generating random commands
-    for (int i = 0; i < limit; i++) {
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distr(min, max); 
+
+    int numCommands = distr(gen);
+
+    for (int i = 0; i < numCommands; i++) {
         addCommand(ICommand::PRINT);
     }
 }

@@ -17,7 +17,7 @@ private:
 	~FCFSScheduler() = default;
 	static FCFSScheduler* sharedInstance;
 
-	std::queue<std::shared_ptr<Process>> readyQueue;
+	std::list<std::shared_ptr<Process>> readyQueue;
 	std::list<std::shared_ptr<Process>> ongoingProcesses;
 	std::list<std::shared_ptr<Process>> finishedProcesses;
 
@@ -30,10 +30,15 @@ public:
 	static FCFSScheduler* getInstance();
 	static void initialize(int numCores);
 	static void destroy(); 
+
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);
 	void addFinished(std::shared_ptr<Process> process);
-	void callScreenLS();
+
+	String callScreenLS();
+
+	std::shared_ptr<Process> findProcess(String name);
+
 	void tick() override;
 	void run() override;
 };

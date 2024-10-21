@@ -131,8 +131,15 @@ void MainConsole::process() {
 		appendToDisplayHistory("\033[1;32mSystem already initialized");
 	}
     else if (command == "screen") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
+        std::cout << "\033[1;33m" << "Available screen commands:\n";
+        std::cout << "\033[1;33m" << "-ls : List all running and finished processes\n";
+        std::cout << "\033[1;33m" << "-r <name> : Retrieve and display a single process by name\n";
+        std::cout << "\033[1;33m" << "-s <name> : Create a new process with the specified name\n";
+
+        appendToDisplayHistory("\033[1;33mAvailable screen commands:");
+        appendToDisplayHistory("\033[1;33m-ls : List all running and finished processes");
+        appendToDisplayHistory("\033[1;33m-r <name> : Retrieve and display a single process by name");
+        appendToDisplayHistory("\033[1;33m-s <name> : Create a new process with the specified name");
     }
     else if (command == "scheduler-test") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
@@ -155,13 +162,12 @@ void MainConsole::process() {
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
         String processName = match[1].str();
-        for (const auto& process : this->processTable) {
-            if (process->getName() == processName) {
-                std::cout << "Process with this name already exists!\n";
-				appendToDisplayHistory("Process with this name already exists!");
-                return;
-            }
+        if (FCFSScheduler::getInstance()->findProcess(processName) != nullptr) {
+            std::cout << "Process with this name already exists!\n";
+			appendToDisplayHistory("Process with this name already exists!");
+            return;
         }
+
         std::stringstream timeStamp = createCurrentTimestamp();
         Process::RequirementFlags flags;
         flags.requireFiles = false;
@@ -169,6 +175,7 @@ void MainConsole::process() {
 		flags.requireMemory = true;
         flags.memoryRequired = 1000;
         auto process = std::make_shared<Process>(0, processName, flags);
+        process->generateDummyCommands(config.min_ins, config.max_ins);
         this->addProcess(process);
         auto newScreen = std::make_shared<BaseScreen>(process, processName);
 
@@ -181,20 +188,30 @@ void MainConsole::process() {
         std::cout << "Retrieving process: " << processName << std::endl;
 		appendToDisplayHistory("Retrieving process: " + processName);
 
-        for (const auto& process : this->processTable) {
-            if (process->getName() == processName) {
-                auto newScreen = std::make_shared<BaseScreen>(process, processName);
-                ConsoleManager::getInstance()->registerScreen(newScreen);
-                ConsoleManager::getInstance()->switchToScreen(processName);
-                return;
-            }
+        std::shared_ptr<Process> process = FCFSScheduler::getInstance()->findProcess(processName);
+        if(process == nullptr)
+        {
+            std::cerr << "Process '" << processName << "' not found\n";
+            appendToDisplayHistory("Process '" + processName + "' not found");
         }
-        std::cerr << "Process '" << processName << "' not found\n";
-        appendToDisplayHistory("Process '" + processName + "' not found");
+        else if (process->getState() != Process::FINISHED) {
+            auto newScreen = std::make_shared<BaseScreen>(process, processName);
+            ConsoleManager::getInstance()->registerScreen(newScreen);
+            ConsoleManager::getInstance()->switchToScreen(processName);
+        }
+        else {
+			std::cerr << "Process '" << processName << "' has already finished\n";
+			appendToDisplayHistory("Process '" + processName + "' has already finished");
+		}
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {
-		FCFSScheduler::getInstance()->callScreenLS();
+		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+        appendToDisplayHistory(screenLsOutput);
+
+    }
+    else if (command == "debug") {
+	    
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";
@@ -205,7 +222,7 @@ void MainConsole::process() {
 void MainConsole::display() {}
 
 void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
-    this->processTable.push_back(newProcess);
+    FCFSScheduler::getInstance()->addProcess(newProcess);
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

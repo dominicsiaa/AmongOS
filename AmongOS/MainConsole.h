@@ -24,7 +24,6 @@ public:
 
 private:
     SchedulerWorker schedulerWorker;
-    std::vector<std::shared_ptr<Process>> processTable;
     std::stringstream createCurrentTimestamp() const;
     String displayHistory;
     bool isInitialized;

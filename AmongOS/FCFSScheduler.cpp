@@ -22,7 +22,7 @@ FCFSScheduler::FCFSScheduler(int numCores) : AScheduler(FCFS, -1, "FCFSScheduler
         flags.requireMemory = true;
 
         auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
-        process->test_generateRandomCommands(100);
+        process->generateDummyCommands(100, 100);
         this->addProcess(process);
     }
 
@@ -40,7 +40,7 @@ void FCFSScheduler::initialize(int numCores)
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
-    readyQueue.push(process);
+	readyQueue.push_back(process);
 }
 
 void FCFSScheduler::run() {
@@ -59,7 +59,7 @@ void FCFSScheduler::tick() {
                 process->setCPUCoreId(i);
 				ongoingProcesses.push_back(process);
                 core[i]->addTask(process);
-                readyQueue.pop();
+				readyQueue.pop_front();;
                 break;
             }
         }
@@ -83,9 +83,20 @@ void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
 	//std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
 }
 
-void FCFSScheduler::callScreenLS() {
-    std::cout << "-------------------------------------" << std::endl;
-    std::cout << "Running processes: " << std::endl;
+#include <iomanip>  // Include for setw
+
+String FCFSScheduler::callScreenLS() {
+    std::ostringstream displayStream;
+
+    // Set column widths (adjust as needed)
+    const int nameWidth = 20;
+    const int timeWidth = 25;
+    const int coreWidth = 6;
+    const int commandWidth = 10;
+
+    displayStream << "-------------------------------------\n";
+    displayStream << "Running processes: \n";
+
     for (auto process : ongoingProcesses) {
         auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
         std::tm buf;
@@ -93,27 +104,36 @@ void FCFSScheduler::callScreenLS() {
 
         std::ostringstream oss;
         oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
-
         std::string formattedTime = oss.str();
-        std::cout << process->getName() << "   ";
 
-        std::cout << "(";
+        // Process name column
+        displayStream << std::setw(nameWidth) << std::left << process->getName() << "   ";
+
+        // Formatted time column
+        displayStream << "(";
         for (char c : formattedTime) {
             if (c == '/' || c == ':') {
-                std::cout << "\033[0m" << c << "\033[33m"; 
+                displayStream << "\033[0m" << c << "\033[33m";
             }
             else {
-                std::cout << "\033[33m" << c; 
+                displayStream << "\033[33m" << c;
             }
         }
-        std::cout << "\033[0m)   "; 
-        std::cout << "Core: " << "\033[33m" << process->getCPUCoreId() << "\033[0m" << "   ";
-        std::cout << "\033[33m" << process->getCommandCounter() << "\033[0m" << " / "; 
-        std::cout << "\033[33m" << process->getTotalCommands() << "\033[0m" << std::endl; 
-    }
-    std::cout << std::endl;
+        displayStream << "\033[0m)   ";
 
-    std::cout << "Finished processes: " << std::endl;
+        // Core ID column
+        displayStream << std::setw(coreWidth) << std::left << "Core: "
+            << "\033[33m" << process->getCPUCoreId() << "\033[0m" << "   ";
+
+        // Command counters column
+        displayStream << std::setw(commandWidth) << std::left << "\033[33m"
+            << process->getCommandCounter() << "\033[0m / "
+            << "\033[33m" << process->getTotalCommands() << "\033[0m"
+            << std::endl;
+    }
+
+    displayStream << "\nFinished processes: \n";
+
     for (auto process : finishedProcesses) {
         auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
         std::tm buf;
@@ -121,26 +141,53 @@ void FCFSScheduler::callScreenLS() {
 
         std::ostringstream oss;
         oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
-
         std::string formattedTime = oss.str();
-        std::cout << process->getName() << "   ";
 
-    
-        std::cout << "(";
+        // Process name column
+        displayStream << std::setw(nameWidth) << std::left << process->getName() << "   ";
+
+        // Formatted time column
+        displayStream << "(";
         for (char c : formattedTime) {
             if (c == '/' || c == ':') {
-                std::cout << "\033[0m" << c << "\033[33m"; 
+                displayStream << "\033[0m" << c << "\033[33m";
             }
             else {
-                std::cout << "\033[33m" << c; 
+                displayStream << "\033[33m" << c;
             }
         }
-        std::cout << "\033[0m)   ";
+        displayStream << "\033[0m)   ";
 
-        std::cout << "Finished   ";
-        std::cout << "\033[33m" << process->getCommandCounter() << "\033[0m" << " / "; 
-        std::cout << "\033[33m" << process->getTotalCommands() << "\033[0m" << std::endl; 
+        // Finished status and command counters column
+        displayStream << std::setw(coreWidth) << std::left << "Finished" << "   ";
+        displayStream << std::setw(commandWidth) << std::left << "\033[33m"
+            << process->getCommandCounter() << "\033[0m / "
+            << "\033[33m" << process->getTotalCommands() << "\033[0m"
+            << std::endl;
     }
 
-    std::cout << "-------------------------------------" << std::endl << std::endl;
+    displayStream << "-------------------------------------" << std::endl;
+    std::cout << displayStream.str();
+
+    return displayStream.str();
+}
+
+
+std::shared_ptr<Process> FCFSScheduler::findProcess(String name) {
+	for (auto process : readyQueue) {
+		if (process->getName() == name) {
+			return process;
+		}
+	}
+	for (auto process : ongoingProcesses) {
+		if (process->getName() == name) {
+			return process;
+		}
+	}
+	for (auto process : finishedProcesses) {
+		if (process->getName() == name) {
+			return process;
+		}
+	}
+	return nullptr;
 }

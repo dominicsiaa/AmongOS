@@ -38,7 +38,7 @@ public:
 
     std::chrono::time_point<std::chrono::system_clock> getStartTime() const;
 
-    bool isFinished() const;
+    bool isFinished();
     int getRemainingTime() const;
     int getCommandCounter() const;
     int getPID() const;
@@ -49,7 +49,7 @@ public:
 
     void setCPUCoreId(int coreId);
 
-    void test_generateRandomCommands(int limit);
+    void generateDummyCommands(unsigned int min, unsigned int max);
 
 private:
     int pid;
