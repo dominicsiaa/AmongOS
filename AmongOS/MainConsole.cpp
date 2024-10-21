@@ -87,7 +87,7 @@ void MainConsole::process() {
 
                 this->config.scheduler = configMap["scheduler"];
                 if (this->config.scheduler != "\"fcfs\"" && this->config.scheduler != "\"rr\"") {
-                    throw std::invalid_argument("Scheduler must be 'fcfs' or 'rr'");
+                    throw std::invalid_argument("scheduler must be 'fcfs' or 'rr'");
                 }
 
                 this->config.quantum_cycles = std::stoul(configMap["quantum-cycles"]);
@@ -102,14 +102,6 @@ void MainConsole::process() {
 
                 this->isInitialized = true;
                 std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
-
-                //std::cout << "\033[1;32m" << "Number of CPUs: " << this->config.num_cpu << "\n";
-                //std::cout << "\033[1;32m" << "Scheduler: " << this->config.scheduler << "\n";
-                //std::cout << "\033[1;32m" << "Quantum Cycles: " << this->config.quantum_cycles << "\n";
-                //std::cout << "\033[1;32m" << "Batch Process Frequency: " << this->config.batch_process_freq << "\n";
-                //std::cout << "\033[1;32m" << "Minimum Instructions: " << this->config.min_ins << "\n";
-                //std::cout << "\033[1;32m" << "Maximum Instructions: " << this->config.max_ins << "\n";
-                //std::cout << "\033[1;32m" << "Delays per Execution: " << this->config.delays_per_exec << "\n";
 
             	appendToDisplayHistory("\033[1;32mSuccessfully initialized AmongOS");
             }
@@ -209,9 +201,6 @@ void MainConsole::process() {
 		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
         appendToDisplayHistory(screenLsOutput);
 
-    }
-    else if (command == "debug") {
-	    
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";

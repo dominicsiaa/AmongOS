@@ -118,6 +118,11 @@ void Process::setCPUCoreId(int coreId)
 	cpuCoreID = coreId;
 }
 
+void Process::setState(ProcessState state)
+{
+	currentState = state;
+}
+
 void Process::generateDummyCommands(unsigned int min, unsigned int max)
 {
     std::random_device rd; 

@@ -30,7 +30,7 @@ private:
 
     struct Config {
         unsigned int num_cpu = 4;
-        std::string scheduler = "rr"; 
+        String scheduler = "rr"; 
         unsigned int quantum_cycles = 5;
         unsigned int batch_process_freq = 1;
         unsigned int min_ins = 1000;

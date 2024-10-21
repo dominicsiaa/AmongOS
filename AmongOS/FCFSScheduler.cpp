@@ -53,13 +53,13 @@ void FCFSScheduler::tick() {
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
 
-        //TODO: fix ready queue logic
         for (int i = 0; i < core.size(); i++) {
             if (!core[i]->hasTasks()) {
                 process->setCPUCoreId(i);
+                process->setState(Process::RUNNING);
 				ongoingProcesses.push_back(process);
                 core[i]->addTask(process);
-				readyQueue.pop_front();;
+				readyQueue.pop_front();
                 break;
             }
         }

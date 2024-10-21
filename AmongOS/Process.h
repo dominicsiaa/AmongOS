@@ -48,6 +48,7 @@ public:
     String getName() const;
 
     void setCPUCoreId(int coreId);
+    void setState(ProcessState state);
 
     void generateDummyCommands(unsigned int min, unsigned int max);
 
