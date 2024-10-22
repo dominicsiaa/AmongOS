@@ -94,7 +94,7 @@ void MainConsole::process() {
                 this->config.batch_process_freq = std::stoul(configMap["batch-process-freq"]);
                 this->config.min_ins = std::stoul(configMap["min-ins"]);
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
-                this->config.delays_per_exec = std::stoul(configMap["delays-per-exec"]);
+                this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
 
                 FCFSScheduler::initialize(this->config.num_cpu);
                 this->schedulerWorker.IThread::start();

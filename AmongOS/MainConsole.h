@@ -35,6 +35,6 @@ private:
         unsigned int batch_process_freq = 1;
         unsigned int min_ins = 1000;
         unsigned int max_ins = 2000;
-        unsigned int delays_per_exec = 0;
+        unsigned int delay_per_exec = 0;
     } config;
 };
