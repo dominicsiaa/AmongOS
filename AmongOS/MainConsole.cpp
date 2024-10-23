@@ -13,11 +13,14 @@ MainConsole::MainConsole() : AConsole("MainConsole") {
 
 std::string displayHistory;
 
+bool MainConsole::isSchedulerTestRunning = false;
+
 void MainConsole::appendToDisplayHistory(const std::string text) {
     displayHistory += text + "\n";
 }
 
 void MainConsole::onEnabled() {
+    
     std::cout << R"(  
    ____    ___ ___   ___   ____    ____       ___   _____
  _/__  |_ |   |   | /   \ |    \  /    |     /   \ / ___/
@@ -34,8 +37,29 @@ void MainConsole::onEnabled() {
     std::cout << displayHistory;
 }
 
+void MainConsole::runSchedulerTest() {
+    for (int i = 0; i < config.batch_process_freq; i++) {
+        std::stringstream timeStamp = createCurrentTimestamp();
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+        flags.memoryRequired = 1000;
+        flags.requireMemory = true;
+
+        // Create and add process to the scheduler
+        auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
+        process->generateDummyCommands(config.min_ins, config.max_ins);
+        this->addProcess(process);
+        processCounter++;
+    }
+}
+
 void MainConsole::process() {
     std::cout << "\033[0m" << "Enter a command: ";
+
+    if (MainConsole::isSchedulerTestRunning) {
+		runSchedulerTest();
+	}
 
     String command;
     std::getline(std::cin, command);
@@ -134,12 +158,28 @@ void MainConsole::process() {
         appendToDisplayHistory("\033[1;33m-s <name> : Create a new process with the specified name");
     }
     else if (command == "scheduler-test") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
+        if (!MainConsole::isSchedulerTestRunning) {
+            std::cout << "\033[1;32mStarting scheduler test...\n";
+            appendToDisplayHistory("\033[1;32mStarting scheduler test...");
+            MainConsole::isSchedulerTestRunning = true;
+        }
+        else {
+            std::cout << "\033[1;31mScheduler test is already running!\n";
+            appendToDisplayHistory("\033[1;31mScheduler test is already running!");
+        }
+
     }
     else if (command == "scheduler-stop") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
+        if (MainConsole::isSchedulerTestRunning) {
+            std::cout << "\033[1;32mStopping scheduler test...\n";
+            appendToDisplayHistory("\033[1;32mStopping scheduler test...");
+            MainConsole::isSchedulerTestRunning = false;
+        }
+        else {
+            std::cout << "\033[1;31mScheduler test is not running!\n";
+            appendToDisplayHistory("\033[1;31mScheduler test is not running!");
+        }
+
     }
     else if (command == "report-util") {
         std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";

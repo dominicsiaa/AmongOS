@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 
-class MainConsole : public AConsole
+class MainConsole : public AConsole 
 {
 public:
     MainConsole();
@@ -22,11 +22,19 @@ public:
     void listProcesses() const;
     void appendToDisplayHistory(const std::string text);
 
+    static bool isSchedulerTestRunning;
+
+
+protected:
+    void runSchedulerTest();
+
+
 private:
     SchedulerWorker schedulerWorker;
     std::stringstream createCurrentTimestamp() const;
     String displayHistory;
     bool isInitialized;
+    unsigned int processCounter = 0;
 
     struct Config {
         unsigned int num_cpu = 4;
