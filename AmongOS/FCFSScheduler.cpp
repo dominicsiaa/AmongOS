@@ -94,6 +94,23 @@ String FCFSScheduler::callScreenLS() {
     const int coreWidth = 6;
     const int commandWidth = 10;
 
+    int totalCores = this->core.size();
+    int usedCores = 0;
+
+
+    for (auto core : this->core) {
+        if (core->hasTasks()) {
+            usedCores++;
+        }
+    }
+
+    int availableCores = totalCores - usedCores;
+    float cpuUtilization = (static_cast<float>(usedCores) / totalCores) * 100;
+
+    displayStream << "CPU utilization: " << std::fixed << std::setprecision(0) << cpuUtilization << "%\n";
+    displayStream << "Cores used: " << usedCores << "\n";
+    displayStream << "Cores available: " << availableCores << "\n\n";
+
     displayStream << "-------------------------------------\n";
     displayStream << "Running processes: \n";
 
