@@ -64,8 +64,8 @@ void MainConsole::process() {
     String command;
     std::getline(std::cin, command);
 
-    std::regex screenCommandR("screen -r (\\w+)");
-    std::regex screenCommandS("screen -s (\\w+)");
+    std::regex screenCommandR("^screen -r (\\w+)");
+    std::regex screenCommandS("^screen -s (\\w+)");
     std::smatch match;
 	
 	appendToDisplayHistory("\033[1;37mEnter a command: " + command);
