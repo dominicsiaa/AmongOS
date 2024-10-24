@@ -1,0 +1,15 @@
+CPU utilization: 0%
+Cores used: 0
+Cores available: 5
+
+-------------------------------------
+Running processes: 
+
+Finished processes: 
+Process4    (10/24/2024 02:22:17PM)    Finished    104 / 104
+Process2    (10/24/2024 02:22:17PM)    Finished    134 / 134
+Process0    (10/24/2024 02:22:16PM)    Finished    154 / 154
+Process1    (10/24/2024 02:22:16PM)    Finished    156 / 156
+Process3    (10/24/2024 02:22:17PM)    Finished    198 / 198
+-------------------------------------
+

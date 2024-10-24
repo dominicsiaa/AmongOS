@@ -117,5 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
+    <Text Include="csopesy-log.txt" />
   </ItemGroup>
 </Project>

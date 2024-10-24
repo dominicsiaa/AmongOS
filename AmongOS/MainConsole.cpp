@@ -182,8 +182,22 @@ void MainConsole::process() {
 
     }
     else if (command == "report-util") {
-        std::cout << "\033[1;32m" << command + " command recognized. Doing Something\n";
-        appendToDisplayHistory("\033[1;32m" + command + " command recognized. Doing Something");
+        std::string logFilePath = "csopesy-log.txt";
+
+        String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+        std::ofstream logFile(logFilePath, std::ios::out | std::ios::trunc);
+
+        if (logFile.is_open()) {
+            std::cout << "\033[1;32mReport generated at C:/" << logFilePath << "!\n";
+            appendToDisplayHistory("\033[1;32mReport generated at C:/" + logFilePath + "!");
+            logFile << screenLsOutput << std::endl;
+            logFile.close();
+        }
+        else {
+            std::cerr << "\033[1;31mUnable to open file: C:/" << logFilePath << "\n";
+            appendToDisplayHistory("\033[1;31mUnable to open file: C:/" + logFilePath);
+        }
+
     }
     else if (command == "clear") {
         system("cls");
@@ -239,6 +253,7 @@ void MainConsole::process() {
     // Handle `screen -ls`
     else if (command == "screen -ls") {
 		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+        std::cout << screenLsOutput;
         appendToDisplayHistory(screenLsOutput);
 
     }
