@@ -14,10 +14,12 @@ public:
     bool hasTasks() const;
     void clearCurrentProcess();
     void tick();
+    int getTimeElapsed();
     std::shared_ptr<Process> getCurrProcess();
 
 private:
     static CPUCore* instance;
     int coreID;
+    int timeElapsed;
     std::shared_ptr<Process> currProcess;
 };

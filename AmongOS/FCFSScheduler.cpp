@@ -89,13 +89,12 @@ void FCFSScheduler::doRR() {
                 process->setState(Process::RUNNING);
                 ongoingProcesses.push_back(process);
                 core[i]->addTask(process);
-                cpuTimeMap[process] = 0;
                 readyQueue.pop_front();
                 break;
             }
 
             std::shared_ptr<Process> currProcess = core[i]->getCurrProcess();
-            if (cpuTimeMap[currProcess] >= quantumTime) {
+            if (core[i]->getTimeElapsed() >= quantumTime) {
                 if (!process->isFinished()) {
                     process->setState(Process::READY);
                     readyQueue.push_back(process);
@@ -103,10 +102,7 @@ void FCFSScheduler::doRR() {
 
                 core[i]->clearCurrentProcess();
                 ongoingProcesses.remove(process);
-                cpuTimeMap.erase(process);
             }
-
-            cpuTimeMap[currProcess]++;
         }
     }
 }

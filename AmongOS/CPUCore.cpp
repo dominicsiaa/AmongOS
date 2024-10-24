@@ -52,9 +52,15 @@ void CPUCore::clearCurrentProcess() {
         //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
 		FCFSScheduler::getInstance()->addFinished(currProcess);
         currProcess.reset();
+        timeElapsed = 0;
     }
+}
+
+int CPUCore::getTimeElapsed() {
+    return timeElapsed;
 }
 
 void CPUCore::tick() {
     processTask();
+    timeElapsed++;
 }

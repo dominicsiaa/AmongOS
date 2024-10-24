@@ -24,7 +24,6 @@ private:
 
 	std::vector<std::shared_ptr<CPUCore>> core;
 	std::vector<std::shared_ptr<CPUCoreWorker>> workers;
-	std::unordered_map<std::shared_ptr<Process>, int> cpuTimeMap;
 
 	std::string scheduler;
 	int	quantumTime = 0;
