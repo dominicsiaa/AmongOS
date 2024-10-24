@@ -29,9 +29,6 @@ private:
     std::unordered_map<std::shared_ptr<Process>, int> cpuTimeMap;
 
 public:
-    RRScheduler(int numCores, int timeQuantum);
-    ~RRScheduler() = default;
-
     static RRScheduler* getInstance();
     static void initialize(int numCores, int timeQuantum);
     static void destroy();
