@@ -33,7 +33,7 @@ public:
     ~RRScheduler() = default;
 
     static RRScheduler* getInstance();
-    static void initialize(int numCores, int timeQuantum);
+    void initialize(int numCores, int timeQuantum) override;
     static void destroy();
 
     void addProcess(std::shared_ptr<Process> process) override;

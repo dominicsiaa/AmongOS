@@ -36,7 +36,7 @@ RRScheduler* RRScheduler::getInstance()
 
 void RRScheduler::initialize(int numCores, int timeQuantum)
 {
-    sharedInstance = new RRScheduler(numCores, timeQuantum);
+    auto scheduler = std::make_shared<RRScheduler>(numCores, timeQuantum);
 }
 
 void RRScheduler::addProcess(std::shared_ptr<Process> process) {

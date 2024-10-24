@@ -44,6 +44,7 @@ public:
 	};
 
 	virtual void tick();
+	virtual void initialize(int num_cpu, int quantum_cycles) {}
 	virtual std::string callScreenLS() = 0;
 
 protected:
