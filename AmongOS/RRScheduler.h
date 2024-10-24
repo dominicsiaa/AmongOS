@@ -14,6 +14,9 @@
 
 class RRScheduler : public AScheduler {
 private:
+    RRScheduler(int numCores, int timeQuantum);  // Private constructor
+    ~RRScheduler() = default;
+
     static RRScheduler* sharedInstance;
 
     std::list<std::shared_ptr<Process>> readyQueue;
@@ -29,9 +32,6 @@ private:
     std::unordered_map<std::shared_ptr<Process>, int> cpuTimeMap;
 
 public:
-    RRScheduler(int numCores, int timeQuantum);
-    ~RRScheduler() = default;
-
     static RRScheduler* getInstance();
     void initialize(int numCores, int timeQuantum) override;
     static void destroy();
