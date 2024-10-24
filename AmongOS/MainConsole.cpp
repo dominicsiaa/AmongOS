@@ -63,6 +63,7 @@ void MainConsole::process() {
 
     String command;
     std::getline(std::cin, command);
+    String screenLsOutput;
 
     std::regex screenCommandR("^screen -r (\\w+)");
     std::regex screenCommandS("^screen -s (\\w+)");
@@ -76,7 +77,7 @@ void MainConsole::process() {
         appendToDisplayHistory("\033[1;32mExiting application...");
 
         ConsoleManager::getInstance()->exitApplication();
-        this->schedulerWorker.update(false);
+        this->schedulerWorker.update(false, this->config.scheduler);
 
     	return;
     }
@@ -84,6 +85,7 @@ void MainConsole::process() {
     // Handle `initialize` command
     if (this->isInitialized == false)
     {
+
         if (command == "initialize") {
             try
             {
@@ -120,9 +122,15 @@ void MainConsole::process() {
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
 
-                FCFSScheduler::initialize(this->config.num_cpu);
+                if (this->config.scheduler == "\"fcfs\"") {
+                    static_cast<FCFSScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
+                }
+                else if (this->config.scheduler == "\"rr\"") {
+                    static_cast<RRScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
+                }
+
                 this->schedulerWorker.IThread::start();
-                this->schedulerWorker.update(true);
+                this->schedulerWorker.update(true, this->config.scheduler);
 
                 this->isInitialized = true;
                 std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
@@ -183,8 +191,7 @@ void MainConsole::process() {
     }
     else if (command == "report-util") {
         std::string logFilePath = "csopesy-log.txt";
-
-        String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+        screenLsOutput = schedulerInstance->callScreenLS();
         std::ofstream logFile(logFilePath, std::ios::out | std::ios::trunc);
 
         if (logFile.is_open()) {
@@ -208,7 +215,7 @@ void MainConsole::process() {
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
         String processName = match[1].str();
-        if (FCFSScheduler::getInstance()->findProcess(processName) != nullptr) {
+        if (schedulerInstance->findProcess(processName) != nullptr) {
             std::cout << "Process with this name already exists!\n";
 			appendToDisplayHistory("Process with this name already exists!");
             return;
@@ -234,7 +241,7 @@ void MainConsole::process() {
         std::cout << "Retrieving process: " << processName << std::endl;
 		appendToDisplayHistory("Retrieving process: " + processName);
 
-        std::shared_ptr<Process> process = FCFSScheduler::getInstance()->findProcess(processName);
+        std::shared_ptr<Process> process = schedulerInstance->findProcess(processName);
         if(process == nullptr)
         {
             std::cerr << "Process '" << processName << "' not found\n";
@@ -252,7 +259,7 @@ void MainConsole::process() {
     }
     // Handle `screen -ls`
     else if (command == "screen -ls") {
-		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+		String screenLsOutput = schedulerInstance->callScreenLS();
         std::cout << screenLsOutput;
         appendToDisplayHistory(screenLsOutput);
 
@@ -266,7 +273,7 @@ void MainConsole::process() {
 void MainConsole::display() {}
 
 void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
-    FCFSScheduler::getInstance()->addProcess(newProcess);
+    schedulerInstance->addProcess(newProcess);
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

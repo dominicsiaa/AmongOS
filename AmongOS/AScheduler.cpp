@@ -9,9 +9,8 @@ void AScheduler::addProcess(std::shared_ptr<Process> process)
 {
 }
 
-std::shared_ptr<Process> AScheduler::findProcess(String processName)
+std::shared_ptr<Process> AScheduler::findProcess(std::string processName)
 {
-	return std::shared_ptr<Process>();
 }
 
 void AScheduler::run()

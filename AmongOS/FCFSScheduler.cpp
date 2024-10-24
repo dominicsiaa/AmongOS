@@ -34,7 +34,7 @@ FCFSScheduler* FCFSScheduler::getInstance()
 	return sharedInstance;
 }
 
-void FCFSScheduler::initialize(int numCores)
+void FCFSScheduler::initialize(int numCores, int timeQuantum)
 {
 	sharedInstance = new FCFSScheduler(numCores);
 }

@@ -18,5 +18,6 @@ public:
 private:
     static CPUCore* instance;
     int coreID;
+    String scheduler;
     std::shared_ptr<Process> currProcess;
 };

@@ -4,6 +4,8 @@
 #include "typedefRepo.h"
 #include "SchedulerWorker.h"
 #include "FCFSScheduler.h"
+#include "RRScheduler.h"
+#include "AScheduler.h"
 #include <vector>
 #include <memory>
 
@@ -34,6 +36,7 @@ private:
     std::stringstream createCurrentTimestamp() const;
     String displayHistory;
     bool isInitialized;
+    AScheduler* schedulerInstance = nullptr;
     unsigned int processCounter = 0;
 
     struct Config {

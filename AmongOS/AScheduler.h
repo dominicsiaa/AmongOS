@@ -30,7 +30,7 @@ public:
 	AScheduler() = default;
 
 	virtual void addProcess(std::shared_ptr<Process> process) = 0;
-	std::shared_ptr<Process> findProcess(String processName);
+	virtual std::shared_ptr<Process> findProcess(std::string name) { return std::shared_ptr<Process>(); }
 	void run() override;
 
 	struct ProcessInfo
@@ -44,7 +44,9 @@ public:
 	};
 
 	virtual void tick();
+	virtual void initialize(int num_cpu, int quantum_cycles) {}
+	virtual std::string callScreenLS() = 0;
 
 protected:
 	std::queue<std::shared_ptr<Process>> readyQueue;
-};
+}
