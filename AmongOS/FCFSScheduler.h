@@ -28,16 +28,16 @@ private:
 
 public:
 	static FCFSScheduler* getInstance();
-	void initialize(int numCores, int timeQuantum) override;
+	static void initialize(int numCores);
 	static void destroy(); 
 
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);
 	void addFinished(std::shared_ptr<Process> process);
 
-	String callScreenLS() override;
+	String callScreenLS();
 
-	std::shared_ptr<Process> findProcess(std::string name) override;
+	std::shared_ptr<Process> findProcess(String name);
 
 	void tick() override;
 	void run() override;

@@ -1,10 +1,9 @@
 #include "CPUCore.h"
 #include "FCFSScheduler.h"
-#include "RRScheduler.h"
 
 CPUCore* CPUCore::instance = nullptr;
 
-CPUCore::CPUCore(int id) : coreID(id), scheduler(scheduler) {
+CPUCore::CPUCore(int id) : coreID(id) {
     //std::cout << "CPU Core " << coreID << " initialized." << std::endl;
 }
 
@@ -47,12 +46,7 @@ bool CPUCore::hasTasks() const {
 void CPUCore::clearCurrentProcess() {
     if (currProcess) {
         //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
-        if (scheduler == "\"fcfs\"") {
-            FCFSScheduler::getInstance()->addFinished(currProcess);
-        }
-        else if (scheduler == "\"rr\"") {
-            RRScheduler::getInstance()->addFinished(currProcess);
-        }
+		FCFSScheduler::getInstance()->addFinished(currProcess);
         currProcess.reset();
     }
 }
