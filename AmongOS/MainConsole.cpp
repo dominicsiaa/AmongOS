@@ -9,6 +9,7 @@
 
 MainConsole::MainConsole() : AConsole("MainConsole") {
     this->isInitialized = false;
+    this->inputWorker = std::make_shared<InputWorker>();
 }
 
 std::string displayHistory;
@@ -37,8 +38,10 @@ void MainConsole::onEnabled() {
     std::cout << displayHistory;
     std::cout << "\033[0m" << "Enter a command: ";
 
-    this->inputWorker.IThread::start();
-    this->inputWorker.update(true);
+    this->command.clear();
+    this->commandEntered = false;
+
+    this->inputWorker->update(true);
 }
 
 void MainConsole::runSchedulerTest() {
@@ -83,6 +86,7 @@ void MainConsole::process() {
 
         ConsoleManager::getInstance()->exitApplication();
         this->schedulerWorker.update(false);
+        return;
     }
 	else if (this->isInitialized == false)
     {
@@ -222,6 +226,7 @@ void MainConsole::process() {
 
             ConsoleManager::getInstance()->registerScreen(newScreen);
             ConsoleManager::getInstance()->switchToScreen(processName);
+            return;
         }
     }
     // Handle `screen -r <name>`
@@ -240,6 +245,7 @@ void MainConsole::process() {
             auto newScreen = std::make_shared<BaseScreen>(process, processName);
             ConsoleManager::getInstance()->registerScreen(newScreen);
             ConsoleManager::getInstance()->switchToScreen(processName);
+            return;
         }
         else {
 			std::cerr << "Process '" << processName << "' has already finished\n";
@@ -262,7 +268,7 @@ void MainConsole::process() {
     this->command.clear();
 
     std::cout << "\033[0m" << "Enter a command: ";
-    this->inputWorker.update(true);
+    this->inputWorker->update(true);
 }
 
 void MainConsole::display() {}

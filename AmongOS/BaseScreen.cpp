@@ -11,25 +11,26 @@
 BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) : AConsole(processName)
 {
 	this->attachedProcess = process;
+	this->inputWorker = std::make_shared<InputWorker>();
 }
 
 void BaseScreen::onEnabled()
 {
+	this->printProcessInfo();
+	std::cout << "root:\\>";
 
+	this->command.clear();
+	this->commandEntered = false;
+
+	this->inputWorker->update(true);
 }
 
 void BaseScreen::process()
 {
-	if (!this->refreshed)
+	if(!this->commandEntered)
 	{
-		this->refreshed = true;
-		this->printProcessInfo();
+		return;
 	}
-
-	std::cout << "root:\\>";
-
-	String command;
-	std::getline(std::cin, command);
 
 	if(command == "clear")
 	{
@@ -43,14 +44,25 @@ void BaseScreen::process()
 	{
 		ConsoleManager::getInstance()->returnToPreviousConsole();
 		ConsoleManager::getInstance()->unregisterScreen(this->name);
+		return;
 	}
 	else
 	{
 		std::cerr << "Command not found\n";
 	}
+
+	this->commandEntered = false;
+	this->command.clear();
+
+	std::cout << "root:\\>";
+	this->inputWorker->update(true);
 }
 
-void BaseScreen::enterCommand(String command) {}
+void BaseScreen::enterCommand(String command)
+{
+	this->command = command;
+	this->commandEntered = true;
+}
 
 void BaseScreen::display()
 {
@@ -68,7 +80,6 @@ void BaseScreen::printProcessInfo() const
 	std::stringstream timeStream;
 	timeStream << std::put_time(&localTime, "%m/%d/%Y, %I:%M:%S %p");
 
-	//TODO: Im just guessing here
 	std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
 	//std::cout << "Process Current Line of Instruction: " << this->attachedProcess->getCurrentLine() << std::endl;
 	//std::cout << "Process Total Lines of Instruction: " << this->attachedProcess->getTotalLines() << std::endl;

@@ -33,7 +33,7 @@ protected:
 
 private:
     SchedulerWorker schedulerWorker;
-    InputWorker inputWorker;
+    std::shared_ptr<InputWorker> inputWorker;
     bool commandEntered = false;
     String command;
 
