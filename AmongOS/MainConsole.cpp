@@ -120,7 +120,7 @@ void MainConsole::process() {
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
 
-                FCFSScheduler::initialize(this->config.num_cpu);
+                FCFSScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler);
                 this->schedulerWorker.IThread::start();
                 this->schedulerWorker.update(true);
 

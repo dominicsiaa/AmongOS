@@ -10,10 +10,11 @@
 #include <queue>
 #include <string>
 #include <iostream>
+#include <string>
 
 class FCFSScheduler : public AScheduler {
 private:
-	FCFSScheduler(int numCores);
+	FCFSScheduler(int numCores, int quantumTime, std::string scheduler);
 	~FCFSScheduler() = default;
 	static FCFSScheduler* sharedInstance;
 
@@ -23,12 +24,16 @@ private:
 
 	std::vector<std::shared_ptr<CPUCore>> core;
 	std::vector<std::shared_ptr<CPUCoreWorker>> workers;
+	std::unordered_map<std::shared_ptr<Process>, int> cpuTimeMap;
+
+	std::string scheduler;
+	int	quantumTime = 0;
 	int numCores = 0;
 	int currentCore = 0;
 
 public:
 	static FCFSScheduler* getInstance();
-	static void initialize(int numCores);
+	static void initialize(int numCores, int quantumTime, std::string scheduler);
 	static void destroy(); 
 
 	void addProcess(std::shared_ptr<Process> process) override;

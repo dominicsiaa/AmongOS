@@ -1,6 +1,6 @@
 #include "FCFSScheduler.h"
 
-FCFSScheduler::FCFSScheduler(int numCores) : AScheduler(FCFS, -1, "FCFSScheduler") {
+FCFSScheduler::FCFSScheduler(int numCores, int quantumTime, std::string scheduler) : AScheduler(FCFS, -1, "FCFSScheduler") {
 
     this->numCores = numCores;
     for (int i = 0; i < numCores; i++)
@@ -12,6 +12,8 @@ FCFSScheduler::FCFSScheduler(int numCores) : AScheduler(FCFS, -1, "FCFSScheduler
         this->workers.push_back(worker);
         worker->update(true);
     }
+    this->quantumTime = quantumTime;
+    this->scheduler = scheduler;
 
 	//create 10 processes on startup
     //for (int i = 0; i < 10; i++) {
@@ -34,9 +36,9 @@ FCFSScheduler* FCFSScheduler::getInstance()
 	return sharedInstance;
 }
 
-void FCFSScheduler::initialize(int numCores)
+void FCFSScheduler::initialize(int numCores, int quantumTime, std::string scheduler)
 {
-	sharedInstance = new FCFSScheduler(numCores);
+	sharedInstance = new FCFSScheduler(numCores, quantumTime, scheduler);
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
@@ -50,21 +52,60 @@ void FCFSScheduler::run() {
 }
 
 void FCFSScheduler::tick() {
-    if (!readyQueue.empty()) {
-        std::shared_ptr<Process> process = readyQueue.front();
+    if (scheduler == "\"fcfs\"") {
+        if (!readyQueue.empty()) {
+            std::shared_ptr<Process> process = readyQueue.front();
 
-        for (int i = 0; i < core.size(); i++) {
-            if (!core[i]->hasTasks()) {
-                process->setCPUCoreId(i);
-                process->setState(Process::RUNNING);
-				ongoingProcesses.push_back(process);
-                core[i]->addTask(process);
-				readyQueue.pop_front();
-                break;
+            for (int i = 0; i < core.size(); i++) {
+                if (!core[i]->hasTasks()) {
+                    process->setCPUCoreId(i);
+                    process->setState(Process::RUNNING);
+				    ongoingProcesses.push_back(process);
+                    core[i]->addTask(process);
+				    readyQueue.pop_front();
+                    break;
+                }
+            }
+        } else {
+        //std::cout << "No tasks in the ready queue." << std::endl;
+        }
+    }
+    else if (scheduler == "\"rr\"") {
+        for (auto it = ongoingProcesses.begin(); it != ongoingProcesses.end();) {
+            auto process = *it;
+            int elapsedTime = cpuTimeMap[process];
+
+            cpuTimeMap[process] += 1;
+
+            if (elapsedTime + 1 >= quantumTime) {
+                if (!process->isFinished()) {
+                    process->setState(Process::READY);
+                    readyQueue.push_back(process);
+                }
+
+                core[process->getCPUCoreId()]->clearCurrentProcess();
+                it = ongoingProcesses.erase(it);
+                cpuTimeMap.erase(process);
+            }
+            else {
+                ++it;
             }
         }
-    } else {
-        //std::cout << "No tasks in the ready queue." << std::endl;
+
+        if (!readyQueue.empty()) {
+            std::shared_ptr<Process> process = readyQueue.front();
+            for (int i = 0; i < core.size(); i++) {
+                if (!core[i]->hasTasks()) {
+                    process->setCPUCoreId(i);
+                    process->setState(Process::RUNNING);
+                    ongoingProcesses.push_back(process);
+                    core[i]->addTask(process);
+                    cpuTimeMap[process] = 0;
+                    readyQueue.pop_front();
+                    break;
+                }
+            }
+        }
     }
 }
 void FCFSScheduler::destroy()
