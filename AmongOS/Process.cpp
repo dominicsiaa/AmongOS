@@ -59,7 +59,9 @@ void Process::executeCurrentCommand() const
         std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
     }
 
-    this->commandList[this->commandCounter]->execute();
+    if (currentState == FINISHED) {
+        // this->commandList[this->commandCounter]->execute();
+    }
 }
 
 void Process::moveToNextLine()
@@ -69,7 +71,7 @@ void Process::moveToNextLine()
 
 bool Process::isFinished()
 {
-    if(this->commandCounter == this->commandList.size())
+    if(this->commandCounter >= this->commandList.size())
     {
         this->currentState = FINISHED;
         return true;

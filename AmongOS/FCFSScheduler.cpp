@@ -99,6 +99,9 @@ void FCFSScheduler::doRR() {
                 if (!readyQueue.empty()) {
                     process = readyQueue.front();
                 }
+                else {
+                    break;
+                }
             }
         }
     }
