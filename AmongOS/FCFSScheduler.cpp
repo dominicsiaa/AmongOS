@@ -105,6 +105,8 @@ void FCFSScheduler::doRR() {
                 ongoingProcesses.remove(process);
                 cpuTimeMap.erase(process);
             }
+
+            cpuTimeMap[currProcess]++;
         }
     }
 }
