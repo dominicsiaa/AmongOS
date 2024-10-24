@@ -13,7 +13,6 @@
 
 class FCFSScheduler : public AScheduler {
 private:
-	
 	static FCFSScheduler* sharedInstance;
 
 	std::list<std::shared_ptr<Process>> readyQueue;
@@ -26,12 +25,12 @@ private:
 	int currentCore = 0;
 
 public:
-	FCFSScheduler(int numCores);
+	FCFSScheduler(int numCores, int timeQuantum);
 	~FCFSScheduler() = default;
 
 	static FCFSScheduler* getInstance();
-	void initialize(int numCores, int timeQuantum) override;
-	static void destroy(); 
+	static void initialize(int numCores, int timeQuantum);
+	static void destroy();
 
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);

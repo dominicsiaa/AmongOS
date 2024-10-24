@@ -1,6 +1,6 @@
 #include "FCFSScheduler.h"
 
-FCFSScheduler::FCFSScheduler(int numCores) : AScheduler(FCFS, -1, "FCFSScheduler") {
+FCFSScheduler::FCFSScheduler(int numCores, int timeQuantum) : AScheduler(FCFS, -1, "FCFSScheduler") {
 
     this->numCores = numCores;
     for (int i = 0; i < numCores; i++)
@@ -36,7 +36,7 @@ FCFSScheduler* FCFSScheduler::getInstance()
 
 void FCFSScheduler::initialize(int numCores, int timeQuantum)
 {
-    auto scheduler = std::make_shared<FCFSScheduler>(numCores);
+    sharedInstance = new FCFSScheduler(numCores, timeQuantum);
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {

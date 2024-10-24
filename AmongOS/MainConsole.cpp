@@ -121,12 +121,16 @@ void MainConsole::process() {
                 this->config.min_ins = std::stoul(configMap["min-ins"]);
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
-
+                
                 if (this->config.scheduler == "\"fcfs\"") {
-                    static_cast<FCFSScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
+                    FCFSScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles);
+                    schedulerInstance = FCFSScheduler::getInstance();
+                    // static_cast<FCFSScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
                 }
                 else if (this->config.scheduler == "\"rr\"") {
-                    static_cast<RRScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
+                    RRScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles);
+                    schedulerInstance = RRScheduler::getInstance();
+                    // static_cast<RRScheduler*>(schedulerInstance)->initialize(this->config.num_cpu, this->config.quantum_cycles);
                 }
 
                 this->schedulerWorker.IThread::start();
