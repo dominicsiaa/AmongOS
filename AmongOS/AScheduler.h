@@ -49,4 +49,4 @@ public:
 
 protected:
 	std::queue<std::shared_ptr<Process>> readyQueue;
-}
+};
