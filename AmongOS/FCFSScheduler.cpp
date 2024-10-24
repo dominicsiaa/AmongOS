@@ -36,7 +36,7 @@ FCFSScheduler* FCFSScheduler::getInstance()
 
 void FCFSScheduler::initialize(int numCores, int timeQuantum)
 {
-    auto scheduler = std::make_shared<FCFSScheduler>(numCores, timeQuantum);
+    auto scheduler = std::make_shared<FCFSScheduler>(numCores);
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
