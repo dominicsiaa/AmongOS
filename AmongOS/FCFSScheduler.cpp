@@ -53,61 +53,62 @@ void FCFSScheduler::run() {
 
 void FCFSScheduler::tick() {
     if (scheduler == "\"fcfs\"") {
-        if (!readyQueue.empty()) {
-            std::shared_ptr<Process> process = readyQueue.front();
-
-            for (int i = 0; i < core.size(); i++) {
-                if (!core[i]->hasTasks()) {
-                    process->setCPUCoreId(i);
-                    process->setState(Process::RUNNING);
-				    ongoingProcesses.push_back(process);
-                    core[i]->addTask(process);
-				    readyQueue.pop_front();
-                    break;
-                }
-            }
-        } else {
-        //std::cout << "No tasks in the ready queue." << std::endl;
-        }
+        this->doFCFS();
     }
     else if (scheduler == "\"rr\"") {
-        for (auto it = ongoingProcesses.begin(); it != ongoingProcesses.end();) {
-            auto process = *it;
-            int elapsedTime = cpuTimeMap[process];
+        this->doRR();
+    }
+}
 
-            cpuTimeMap[process] += 1;
+void FCFSScheduler::doFCFS() {
+    if (!readyQueue.empty()) {
+        std::shared_ptr<Process> process = readyQueue.front();
 
-            if (elapsedTime + 1 >= quantumTime) {
+        for (int i = 0; i < core.size(); i++) {
+            if (!core[i]->hasTasks()) {
+                process->setCPUCoreId(i);
+                process->setState(Process::RUNNING);
+                ongoingProcesses.push_back(process);
+                core[i]->addTask(process);
+                readyQueue.pop_front();
+                break;
+            }
+        }
+    }
+    else {
+        //std::cout << "No tasks in the ready queue." << std::endl;
+    }
+}
+
+void FCFSScheduler::doRR() {
+    if (!readyQueue.empty()) {
+        std::shared_ptr<Process> process = readyQueue.front();
+        for (int i = 0; i < core.size(); i++) {
+            if (!core[i]->hasTasks()) {
+                process->setCPUCoreId(i);
+                process->setState(Process::RUNNING);
+                ongoingProcesses.push_back(process);
+                core[i]->addTask(process);
+                cpuTimeMap[process] = 0;
+                readyQueue.pop_front();
+                break;
+            }
+
+            std::shared_ptr<Process> currProcess = core[i]->getCurrProcess();
+            if (cpuTimeMap[currProcess] >= quantumTime) {
                 if (!process->isFinished()) {
                     process->setState(Process::READY);
                     readyQueue.push_back(process);
                 }
 
-                core[process->getCPUCoreId()]->clearCurrentProcess();
-                it = ongoingProcesses.erase(it);
+                core[i]->clearCurrentProcess();
+                ongoingProcesses.remove(process);
                 cpuTimeMap.erase(process);
-            }
-            else {
-                ++it;
-            }
-        }
-
-        if (!readyQueue.empty()) {
-            std::shared_ptr<Process> process = readyQueue.front();
-            for (int i = 0; i < core.size(); i++) {
-                if (!core[i]->hasTasks()) {
-                    process->setCPUCoreId(i);
-                    process->setState(Process::RUNNING);
-                    ongoingProcesses.push_back(process);
-                    core[i]->addTask(process);
-                    cpuTimeMap[process] = 0;
-                    readyQueue.pop_front();
-                    break;
-                }
             }
         }
     }
 }
+
 void FCFSScheduler::destroy()
 {
 	delete sharedInstance;

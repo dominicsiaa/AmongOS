@@ -39,6 +39,10 @@ int CPUCore::getCoreID() const {
     return coreID;
 }
 
+std::shared_ptr<Process> CPUCore::getCurrProcess() {
+    return this->currProcess;
+}
+
 bool CPUCore::hasTasks() const {
     return currProcess != nullptr;
 }

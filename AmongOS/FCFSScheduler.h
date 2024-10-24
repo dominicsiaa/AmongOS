@@ -31,6 +31,9 @@ private:
 	int numCores = 0;
 	int currentCore = 0;
 
+	void doFCFS();
+	void doRR();
+
 public:
 	static FCFSScheduler* getInstance();
 	static void initialize(int numCores, int quantumTime, std::string scheduler);

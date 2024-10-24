@@ -14,6 +14,7 @@ public:
     bool hasTasks() const;
     void clearCurrentProcess();
     void tick();
+    std::shared_ptr<Process> getCurrProcess();
 
 private:
     static CPUCore* instance;
