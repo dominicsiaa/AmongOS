@@ -1,8 +1,7 @@
 #pragma once
-#include "Process.h"
 #include <iostream>
 #include <memory>
-#include <string>
+#include "Process.h"
 
 class CPUCore {
 public:
@@ -19,6 +18,6 @@ public:
 private:
     static CPUCore* instance;
     int coreID;
-    std::string scheduler;
+    String scheduler;
     std::shared_ptr<Process> currProcess;
 };

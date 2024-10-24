@@ -4,7 +4,7 @@
 
 CPUCore* CPUCore::instance = nullptr;
 
-CPUCore::CPUCore(int id) : coreID(id) {
+CPUCore::CPUCore(int id) : coreID(id), scheduler(scheduler) {
     //std::cout << "CPU Core " << coreID << " initialized." << std::endl;
 }
 
