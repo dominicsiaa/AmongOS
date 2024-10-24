@@ -23,6 +23,7 @@ class ConsoleManager
 
 		void drawConsole() const;
 		void process() const;
+		void enterCommand(String command);
 
 		void switchConsole(String consoleName);
 		void returnToPreviousConsole();

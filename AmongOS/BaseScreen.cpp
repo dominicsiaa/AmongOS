@@ -50,6 +50,8 @@ void BaseScreen::process()
 	}
 }
 
+void BaseScreen::enterCommand(String command) {}
+
 void BaseScreen::display()
 {
 	

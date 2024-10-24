@@ -42,6 +42,11 @@ void ConsoleManager::process() const
 	}
 }
 
+void ConsoleManager::enterCommand(String command)
+{
+	this->currentConsole->enterCommand(command);
+}
+
 void ConsoleManager::switchConsole(String consoleName)
 {
 	if(this->consoleTable.contains(consoleName))

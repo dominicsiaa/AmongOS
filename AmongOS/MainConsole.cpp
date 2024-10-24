@@ -35,34 +35,40 @@ void MainConsole::onEnabled() {
     std::cout << "\033[1;32m" << "Hello, Welcome to Among OS commandline!\n";
     std::cout << "\033[1;33m" << "Type 'exit' to quit, 'clear' to clear the screen\n";
     std::cout << displayHistory;
+    std::cout << "\033[0m" << "Enter a command: ";
+
+    this->inputWorker.IThread::start();
+    this->inputWorker.update(true);
 }
 
 void MainConsole::runSchedulerTest() {
-    for (int i = 0; i < config.batch_process_freq; i++) {
-        std::stringstream timeStamp = createCurrentTimestamp();
-        Process::RequirementFlags flags;
-        flags.requireFiles = false;
-        flags.numFiles = 0;
-        flags.memoryRequired = 1000;
-        flags.requireMemory = true;
+    //std::cout << "Running scheduler test...\n" << processCounter;
+    std::stringstream timeStamp = createCurrentTimestamp();
+    Process::RequirementFlags flags;
+    flags.requireFiles = false;
+    flags.numFiles = 0;
+    flags.memoryRequired = 1000;
+    flags.requireMemory = true;
 
-        // Create and add process to the scheduler
-        auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
-        process->generateDummyCommands(config.min_ins, config.max_ins);
-        this->addProcess(process);
-        processCounter++;
-    }
+    // Create and add process to the scheduler
+    auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
+    process->generateDummyCommands(config.min_ins, config.max_ins);
+    this->addProcess(process);
+    processCounter++;
+
+    //delay
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
 void MainConsole::process() {
-    std::cout << "\033[0m" << "Enter a command: ";
 
     if (MainConsole::isSchedulerTestRunning) {
-		runSchedulerTest();
-	}
+        runSchedulerTest();
+    }
 
-    String command;
-    std::getline(std::cin, command);
+    if(!this->commandEntered) {
+		return;
+	}
 
     std::regex screenCommandR("^screen -r (\\w+)");
     std::regex screenCommandS("^screen -s (\\w+)");
@@ -77,21 +83,15 @@ void MainConsole::process() {
 
         ConsoleManager::getInstance()->exitApplication();
         this->schedulerWorker.update(false);
-
-    	return;
     }
-
-    // Handle `initialize` command
-    if (this->isInitialized == false)
+	else if (this->isInitialized == false)
     {
         if (command == "initialize") {
             try
             {
                 std::ifstream configFile("config.txt");
                 if (!configFile.is_open()) {
-                    std::cerr << "\033[1;31mError: Could not open config.txt\n";
-                    appendToDisplayHistory("\033[1;31mError: Could not open config.txt");
-                    return;
+                    throw std::runtime_error("config.txt not found");
                 }
 
                 std::unordered_map<String, String> configMap;
@@ -138,11 +138,8 @@ void MainConsole::process() {
 			std::cout << "\033[1;31m" << "Error: System not initialized. Please run 'initialize' command\n";
 			appendToDisplayHistory("\033[1;31mError: System not initialized. Please run 'initialize' command");
 		}
-        return;
     }
-
-    // Handle all other commands
-    if (command == "initialize") {
+    else if (command == "initialize") {
 		std::cout << "\033[1;32m" << "System already initialized\n";
 		appendToDisplayHistory("\033[1;32mSystem already initialized");
 	}
@@ -197,7 +194,6 @@ void MainConsole::process() {
             std::cerr << "\033[1;31mUnable to open file: C:/" << logFilePath << "\n";
             appendToDisplayHistory("\033[1;31mUnable to open file: C:/" + logFilePath);
         }
-
     }
     else if (command == "clear") {
         system("cls");
@@ -211,22 +207,22 @@ void MainConsole::process() {
         if (FCFSScheduler::getInstance()->findProcess(processName) != nullptr) {
             std::cout << "Process with this name already exists!\n";
 			appendToDisplayHistory("Process with this name already exists!");
-            return;
+        } else
+        {
+            std::stringstream timeStamp = createCurrentTimestamp();
+            Process::RequirementFlags flags;
+            flags.requireFiles = false;
+            flags.numFiles = 0;
+            flags.requireMemory = true;
+            flags.memoryRequired = 1000;
+            auto process = std::make_shared<Process>(0, processName, flags);
+            process->generateDummyCommands(config.min_ins, config.max_ins);
+            this->addProcess(process);
+            auto newScreen = std::make_shared<BaseScreen>(process, processName);
+
+            ConsoleManager::getInstance()->registerScreen(newScreen);
+            ConsoleManager::getInstance()->switchToScreen(processName);
         }
-
-        std::stringstream timeStamp = createCurrentTimestamp();
-        Process::RequirementFlags flags;
-        flags.requireFiles = false;
-        flags.numFiles = 0;
-		flags.requireMemory = true;
-        flags.memoryRequired = 1000;
-        auto process = std::make_shared<Process>(0, processName, flags);
-        process->generateDummyCommands(config.min_ins, config.max_ins);
-        this->addProcess(process);
-        auto newScreen = std::make_shared<BaseScreen>(process, processName);
-
-        ConsoleManager::getInstance()->registerScreen(newScreen);
-        ConsoleManager::getInstance()->switchToScreen(processName);
     }
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
@@ -261,9 +257,21 @@ void MainConsole::process() {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";
 		appendToDisplayHistory("\033[1;31mError: command not recognized. Please try again");
     }
+
+	this->commandEntered = false;
+    this->command.clear();
+
+    std::cout << "\033[0m" << "Enter a command: ";
+    this->inputWorker.update(true);
 }
 
 void MainConsole::display() {}
+
+void MainConsole::enterCommand(String command)
+{
+    this->command = command;
+    this->commandEntered = true;
+}
 
 void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
     FCFSScheduler::getInstance()->addProcess(newProcess);

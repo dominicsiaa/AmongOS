@@ -2,6 +2,7 @@
 #include "AConsole.h"
 #include "Process.h"
 #include "typedefRepo.h"
+#include "InputWorker.h"
 #include "SchedulerWorker.h"
 #include "FCFSScheduler.h"
 #include <vector>
@@ -16,6 +17,7 @@ public:
     void onEnabled() override;
     void display() override;
     void process() override;
+    void enterCommand(String command);
 
     // Process Table related functions
     void addProcess(std::shared_ptr<Process> newProcess);
@@ -31,6 +33,10 @@ protected:
 
 private:
     SchedulerWorker schedulerWorker;
+    InputWorker inputWorker;
+    bool commandEntered = false;
+    String command;
+
     std::stringstream createCurrentTimestamp() const;
     String displayHistory;
     bool isInitialized;
