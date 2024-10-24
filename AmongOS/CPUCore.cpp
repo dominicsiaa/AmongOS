@@ -50,7 +50,13 @@ bool CPUCore::hasTasks() const {
 void CPUCore::clearCurrentProcess() {
     if (currProcess) {
         //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
-		FCFSScheduler::getInstance()->addFinished(currProcess);
+        if (currProcess->isFinished()) {
+            FCFSScheduler::getInstance()->addFinished(currProcess);
+        }
+        else {
+            FCFSScheduler::getInstance()->addBackToRQ(currProcess);
+        }
+
         currProcess.reset();
         timeElapsed = 0;
     }
@@ -63,4 +69,5 @@ int CPUCore::getTimeElapsed() {
 void CPUCore::tick() {
     processTask();
     timeElapsed++;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
