@@ -45,7 +45,7 @@ private:
     struct Config {
         unsigned int num_cpu = 4;
         String scheduler = "rr"; 
-        unsigned int quantum_cycles = 1;
+        unsigned int quantum_cycles = 10;
         unsigned int batch_process_freq = 1;
         unsigned int min_ins = 1000;
         unsigned int max_ins = 2000;

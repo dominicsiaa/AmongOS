@@ -16,17 +16,17 @@ FCFSScheduler::FCFSScheduler(int numCores, int quantumTime, std::string schedule
     this->scheduler = scheduler;
 
 	//create 10 processes on startup
-    //for (int i = 0; i < 10; i++) {
-    //    Process::RequirementFlags flags;
-    //    flags.requireFiles = false;
-    //    flags.numFiles = 0;
-    //    flags.memoryRequired = 1000;
-    //    flags.requireMemory = true;
+    for (int i = 0; i < 10; i++) {
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+        flags.memoryRequired = 1000;
+        flags.requireMemory = true;
 
-    //    auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
-    //    process->generateDummyCommands(100, 100);
-    //    this->addProcess(process);
-    //}
+        auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
+        process->generateDummyCommands(100, 100);
+        this->addProcess(process);
+    }
 
 }
 
@@ -83,7 +83,12 @@ void FCFSScheduler::doFCFS() {
 void FCFSScheduler::doRR() {
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
+
         for (int i = 0; i < core.size(); i++) {
+            if (core[i]->getTimeElapsed() >= quantumTime) {
+                core[i]->clearCurrentProcess();
+            }
+
             if (!core[i]->hasTasks()) {
                 process->setCPUCoreId(i);
                 process->setState(Process::RUNNING);
@@ -91,17 +96,6 @@ void FCFSScheduler::doRR() {
                 core[i]->addTask(process);
                 readyQueue.pop_front();
                 break;
-            }
-
-            std::shared_ptr<Process> currProcess = core[i]->getCurrProcess();
-            if (core[i]->getTimeElapsed() >= quantumTime) {
-                if (!process->isFinished()) {
-                    process->setState(Process::READY);
-                    readyQueue.push_back(process);
-                }
-
-                core[i]->clearCurrentProcess();
-                ongoingProcesses.remove(process);
             }
         }
     }
@@ -123,6 +117,13 @@ void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
 	//std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
 }
 
+void FCFSScheduler::addBackToRQ(std::shared_ptr<Process> process) {
+    ongoingProcesses.remove(process);
+    process->setState(Process::READY);
+    readyQueue.push_back(process);
+    //std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
+}
+
 std::string FCFSScheduler::callScreenLS() {
     std::ostringstream displayStream;
 
@@ -142,6 +143,23 @@ std::string FCFSScheduler::callScreenLS() {
     displayStream << "CPU utilization: " << std::fixed << std::setprecision(0) << cpuUtilization << "%\n";
     displayStream << "Cores used: " << usedCores << "\n";
     displayStream << "Cores available: " << availableCores << "\n\n";
+
+    displayStream << "-------------------------------------\n";
+    displayStream << "Ready queue processes: \n";
+
+    for (auto process : readyQueue) {
+        auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
+        std::tm buf;
+        localtime_s(&buf, &in_time_t);
+
+        std::ostringstream oss;
+        oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
+
+        displayStream << process->getName() << "    ";
+        displayStream << "(" << oss.str() << ")    ";
+        displayStream << "Core: " << process->getCPUCoreId() << "    ";
+        displayStream << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
+    }
 
     displayStream << "-------------------------------------\n";
     displayStream << "Running processes: \n";

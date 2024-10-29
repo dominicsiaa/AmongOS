@@ -41,6 +41,7 @@ public:
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);
 	void addFinished(std::shared_ptr<Process> process);
+	void addBackToRQ(std::shared_ptr<Process> process);
 
 	String callScreenLS();
 

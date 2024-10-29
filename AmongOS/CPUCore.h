@@ -20,6 +20,6 @@ public:
 private:
     static CPUCore* instance;
     int coreID;
-    int timeElapsed;
+    int timeElapsed = 0;
     std::shared_ptr<Process> currProcess;
 };
