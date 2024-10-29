@@ -83,7 +83,7 @@ void FCFSScheduler::doFCFS() {
 void FCFSScheduler::doRR() {
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
-
+        
         for (int i = 0; i < core.size(); i++) {
             if (core[i]->getTimeElapsed() >= quantumTime) {
                 core[i]->clearCurrentProcess();
@@ -95,7 +95,13 @@ void FCFSScheduler::doRR() {
                 ongoingProcesses.push_back(process);
                 core[i]->addTask(process);
                 readyQueue.pop_front();
-                break;
+
+                if (!readyQueue.empty()) {
+                    process = readyQueue.front();
+                }
+                else {
+                    break;
+                }
             }
         }
     }
