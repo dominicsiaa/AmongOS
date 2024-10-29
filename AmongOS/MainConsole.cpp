@@ -45,22 +45,32 @@ void MainConsole::onEnabled() {
 }
 
 void MainConsole::runSchedulerTest() {
-    //std::cout << "Running scheduler test...\n" << processCounter;
-    std::stringstream timeStamp = createCurrentTimestamp();
-    Process::RequirementFlags flags;
-    flags.requireFiles = false;
-    flags.numFiles = 0;
-    flags.memoryRequired = 1000;
-    flags.requireMemory = true;
+    static unsigned int accumulatedCycles = 0; 
 
-    // Create and add process to the scheduler
-    auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
-    process->generateDummyCommands(config.min_ins, config.max_ins);
-    this->addProcess(process);
-    processCounter++;
+    cpuCycleCounter++;
+    accumulatedCycles++;  
 
+    if (accumulatedCycles >= config.batch_process_freq) {
+        std::stringstream timeStamp = createCurrentTimestamp();
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+        flags.memoryRequired = 1000;
+        flags.requireMemory = true;
+
+        auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
+        process->generateDummyCommands(config.min_ins, config.max_ins);
+        this->addProcess(process);
+        processCounter++;
+
+        accumulatedCycles = 0;  
+       // std::cout << "Process Counter: " << processCounter << std::endl;
+    }
+    
     //delay
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+   // std::this_thread::sleep_for(std::chrono::microseconds(100));
+
 }
 
 void MainConsole::process() {

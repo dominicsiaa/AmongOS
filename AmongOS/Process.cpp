@@ -28,40 +28,40 @@ void Process::addCommand(ICommand::CommandType commandType)
 
 void Process::executeCurrentCommand() const
 {
-    std::string folder = "temp"; // Specify the folder name
-    std::ostringstream filename;
-    filename << folder << "/pid" << pid << ".txt"; // Construct the filename with folder
+    //std::string folder = "temp"; // Specify the folder name
+    //std::ostringstream filename;
+    //filename << folder << "/pid" << pid << ".txt"; // Construct the filename with folder
 
-    // Ensure the folder exists
-    std::filesystem::create_directories(folder);
+    //// Ensure the folder exists
+    //std::filesystem::create_directories(folder);
 
-    std::ofstream outFile(filename.str(), std::ios_base::out | std::ios_base::app); // Open file in append mode, create if it doesn't exist
-    if (outFile.is_open()) {
-        // Check if the file is empty to write the process name
-        std::ifstream inFile(filename.str());
-        if (inFile.peek() == std::ifstream::traits_type::eof()) {
-            outFile << "Process name: " << name << std::endl;
-            outFile << "Logs:" << std::endl << std::endl;
-        }
-        inFile.close();
+    //std::ofstream outFile(filename.str(), std::ios_base::out | std::ios_base::app); // Open file in append mode, create if it doesn't exist
+    //if (outFile.is_open()) {
+    //    // Check if the file is empty to write the process name
+    //    std::ifstream inFile(filename.str());
+    //    if (inFile.peek() == std::ifstream::traits_type::eof()) {
+    //        outFile << "Process name: " << name << std::endl;
+    //        outFile << "Logs:" << std::endl << std::endl;
+    //    }
+    //    inFile.close();
 
-        // Get current time
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-        std::tm buf;
-        localtime_s(&buf, &in_time_t);
+    //    // Get current time
+    //    auto now = std::chrono::system_clock::now();
+    //    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    //    std::tm buf;
+    //    localtime_s(&buf, &in_time_t);
 
-        // Write log entry
-        outFile << "(" << std::put_time(&buf, "%m/%d/%Y %H:%M:%S") << ") Core: " << cpuCoreID << " "; // Replace "CoreIDHere" with actual core ID
-        outFile.close();
-    }
-    else {
-        std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
-    }
+    //    // Write log entry
+    //    outFile << "(" << std::put_time(&buf, "%m/%d/%Y %H:%M:%S") << ") Core: " << cpuCoreID << " "; // Replace "CoreIDHere" with actual core ID
+    //    outFile.close();
+    //}
+    //else {
+    //    std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
+    //}
 
-    if (currentState == FINISHED) {
-        // this->commandList[this->commandCounter]->execute();
-    }
+    //if (currentState == FINISHED) {
+    //    // this->commandList[this->commandCounter]->execute();
+    //}
 }
 
 void Process::moveToNextLine()

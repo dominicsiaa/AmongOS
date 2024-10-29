@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <string>
+#include <mutex>
 
 class FCFSScheduler : public AScheduler {
 private:
@@ -21,6 +22,10 @@ private:
 	std::list<std::shared_ptr<Process>> readyQueue;
 	std::list<std::shared_ptr<Process>> ongoingProcesses;
 	std::list<std::shared_ptr<Process>> finishedProcesses;
+
+	std::mutex readyQueueMutex;
+	std::mutex ongoingProcessesMutex;
+	std::mutex finishedProcessesMutex;
 
 	std::vector<std::shared_ptr<CPUCore>> core;
 	std::vector<std::shared_ptr<CPUCoreWorker>> workers;
@@ -36,7 +41,7 @@ private:
 public:
 	static FCFSScheduler* getInstance();
 	static void initialize(int numCores, int quantumTime, std::string scheduler);
-	static void destroy(); 
+	static void destroy();
 
 	void addProcess(std::shared_ptr<Process> process) override;
 	void addCore(std::shared_ptr<CPUCore> core);

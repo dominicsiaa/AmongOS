@@ -15,40 +15,41 @@ FCFSScheduler::FCFSScheduler(int numCores, int quantumTime, std::string schedule
     this->quantumTime = quantumTime;
     this->scheduler = scheduler;
 
-	//create 10 processes on startup
-    for (int i = 0; i < 10; i++) {
-        Process::RequirementFlags flags;
-        flags.requireFiles = false;
-        flags.numFiles = 0;
-        flags.memoryRequired = 1000;
-        flags.requireMemory = true;
+    //create 10 processes on startup
+    //for (int i = 0; i < 10; i++) {
+    //    Process::RequirementFlags flags;
+    //    flags.requireFiles = false;
+    //    flags.numFiles = 0;
+    //    flags.memoryRequired = 1000;
+    //    flags.requireMemory = true;
 
-        auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
-        process->generateDummyCommands(100, 100);
-        this->addProcess(process);
-    }
+    //    auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
+    //    process->generateDummyCommands(100, 100);
+    //    this->addProcess(process);
+   // }
 
 }
 
 FCFSScheduler* FCFSScheduler::sharedInstance = nullptr;
 FCFSScheduler* FCFSScheduler::getInstance()
 {
-	return sharedInstance;
+    return sharedInstance;
 }
 
 void FCFSScheduler::initialize(int numCores, int quantumTime, std::string scheduler)
 {
-	sharedInstance = new FCFSScheduler(numCores, quantumTime, scheduler);
+    sharedInstance = new FCFSScheduler(numCores, quantumTime, scheduler);
 }
 
 void FCFSScheduler::addProcess(std::shared_ptr<Process> process) {
-	readyQueue.push_back(process);
+    std::lock_guard<std::mutex> lock(readyQueueMutex);
+    readyQueue.push_back(process);
 }
 
 void FCFSScheduler::run() {
-	while (!readyQueue.empty()) {
-		tick();
-	}
+    while (!readyQueue.empty()) {
+        tick();
+    }
 }
 
 void FCFSScheduler::tick() {
@@ -61,6 +62,7 @@ void FCFSScheduler::tick() {
 }
 
 void FCFSScheduler::doFCFS() {
+    std::lock_guard<std::mutex> lock(readyQueueMutex);
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
 
@@ -68,7 +70,10 @@ void FCFSScheduler::doFCFS() {
             if (!core[i]->hasTasks()) {
                 process->setCPUCoreId(i);
                 process->setState(Process::RUNNING);
-                ongoingProcesses.push_back(process);
+                {
+                    std::lock_guard<std::mutex> ongoingLock(ongoingProcessesMutex);
+                    ongoingProcesses.push_back(process);
+                }
                 core[i]->addTask(process);
                 readyQueue.pop_front();
                 break;
@@ -81,9 +86,10 @@ void FCFSScheduler::doFCFS() {
 }
 
 void FCFSScheduler::doRR() {
+    std::lock_guard<std::mutex> lock(readyQueueMutex);
     if (!readyQueue.empty()) {
         std::shared_ptr<Process> process = readyQueue.front();
-        
+
         for (int i = 0; i < core.size(); i++) {
             if (core[i]->getTimeElapsed() >= quantumTime) {
                 core[i]->clearCurrentProcess();
@@ -92,7 +98,10 @@ void FCFSScheduler::doRR() {
             if (!core[i]->hasTasks()) {
                 process->setCPUCoreId(i);
                 process->setState(Process::RUNNING);
-                ongoingProcesses.push_back(process);
+                {
+                    std::lock_guard<std::mutex> ongoingLock(ongoingProcessesMutex);
+                    ongoingProcesses.push_back(process);
+                }
                 core[i]->addTask(process);
                 readyQueue.pop_front();
 
@@ -109,7 +118,7 @@ void FCFSScheduler::doRR() {
 
 void FCFSScheduler::destroy()
 {
-	delete sharedInstance;
+    delete sharedInstance;
 }
 
 void FCFSScheduler::addCore(std::shared_ptr<CPUCore> core) {
@@ -118,13 +127,24 @@ void FCFSScheduler::addCore(std::shared_ptr<CPUCore> core) {
 }
 
 void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
-    ongoingProcesses.remove(process);
-	finishedProcesses.push_back(process);
-	//std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
+    {
+        std::lock_guard<std::mutex> lock(ongoingProcessesMutex);
+        ongoingProcesses.remove(process);
+    }
+
+    std::lock_guard<std::mutex> finishedLock(finishedProcessesMutex);
+    finishedProcesses.push_back(process);
+
+    //std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
 }
 
 void FCFSScheduler::addBackToRQ(std::shared_ptr<Process> process) {
-    ongoingProcesses.remove(process);
+    {
+        std::lock_guard<std::mutex> lock(ongoingProcessesMutex);
+        ongoingProcesses.remove(process);
+    }
+
+    std::lock_guard<std::mutex> readyLock(readyQueueMutex);
     process->setState(Process::READY);
     readyQueue.push_back(process);
     //std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
@@ -136,7 +156,7 @@ std::string FCFSScheduler::callScreenLS() {
     int totalCores = this->core.size();
     int usedCores = 0;
 
- 
+
     for (auto core : this->core) {
         if (core->hasTasks()) {
             usedCores++;
@@ -150,22 +170,22 @@ std::string FCFSScheduler::callScreenLS() {
     displayStream << "Cores used: " << usedCores << "\n";
     displayStream << "Cores available: " << availableCores << "\n\n";
 
-    displayStream << "-------------------------------------\n";
-    displayStream << "Ready queue processes: \n";
+    //displayStream << "-------------------------------------\n";
+    //displayStream << "Ready queue processes: \n";
 
-    for (auto process : readyQueue) {
-        auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
-        std::tm buf;
-        localtime_s(&buf, &in_time_t);
+    //for (auto process : readyQueue) {
+    //    auto in_time_t = std::chrono::system_clock::to_time_t(process->getStartTime());
+    //    std::tm buf;
+    //    localtime_s(&buf, &in_time_t);
 
-        std::ostringstream oss;
-        oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
+    //    std::ostringstream oss;
+    //    oss << std::put_time(&buf, "%m/%d/%Y %I:%M:%S%p");
 
-        displayStream << process->getName() << "    ";
-        displayStream << "(" << oss.str() << ")    ";
-        displayStream << "Core: " << process->getCPUCoreId() << "    ";
-        displayStream << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
-    }
+    //    displayStream << process->getName() << "    ";
+    //    displayStream << "(" << oss.str() << ")    ";
+    //    displayStream << "Core: " << process->getCPUCoreId() << "    ";
+    //    displayStream << process->getCommandCounter() << " / " << process->getTotalCommands() << std::endl;
+    //}
 
     displayStream << "-------------------------------------\n";
     displayStream << "Running processes: \n";
@@ -211,20 +231,25 @@ std::string FCFSScheduler::callScreenLS() {
 
 
 std::shared_ptr<Process> FCFSScheduler::findProcess(String name) {
-	for (auto process : readyQueue) {
-		if (process->getName() == name) {
-			return process;
-		}
-	}
-	for (auto process : ongoingProcesses) {
-		if (process->getName() == name) {
-			return process;
-		}
-	}
-	for (auto process : finishedProcesses) {
-		if (process->getName() == name) {
-			return process;
-		}
-	}
-	return nullptr;
+    std::lock_guard<std::mutex> readyLock(readyQueueMutex);
+    for (auto process : readyQueue) {
+        if (process->getName() == name) {
+            return process;
+        }
+    }
+
+    std::lock_guard<std::mutex> ongoingLock(ongoingProcessesMutex);
+    for (auto process : ongoingProcesses) {
+        if (process->getName() == name) {
+            return process;
+        }
+    }
+
+    std::lock_guard<std::mutex> finishedLock(finishedProcessesMutex);
+    for (auto process : finishedProcesses) {
+        if (process->getName() == name) {
+            return process;
+        }
+    }
+    return nullptr;
 }

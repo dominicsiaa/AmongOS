@@ -41,6 +41,7 @@ private:
     String displayHistory;
     bool isInitialized;
     unsigned int processCounter = 0;
+    unsigned long long cpuCycleCounter = 0;
 
     struct Config {
         unsigned int num_cpu = 4;
