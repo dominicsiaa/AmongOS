@@ -16,10 +16,13 @@ public:
     void tick();
     int getTimeElapsed();
     std::shared_ptr<Process> getCurrProcess();
+    void setDelayPerExec(unsigned int delay) { delayPerExec = delay; tickCounter = delay; }
 
 private:
     static CPUCore* instance;
     int coreID;
     int timeElapsed = 0;
+    int tickCounter = 0;
     std::shared_ptr<Process> currProcess;
+    unsigned int delayPerExec;
 };

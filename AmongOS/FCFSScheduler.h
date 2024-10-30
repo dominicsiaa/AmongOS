@@ -14,7 +14,7 @@
 
 class FCFSScheduler : public AScheduler {
 private:
-	FCFSScheduler(int numCores, int quantumTime, std::string scheduler);
+	FCFSScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay);
 	~FCFSScheduler() = default;
 	static FCFSScheduler* sharedInstance;
 
@@ -35,7 +35,7 @@ private:
 
 public:
 	static FCFSScheduler* getInstance();
-	static void initialize(int numCores, int quantumTime, std::string scheduler);
+	static void initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay);
 	static void destroy(); 
 
 	void addProcess(std::shared_ptr<Process> process) override;
