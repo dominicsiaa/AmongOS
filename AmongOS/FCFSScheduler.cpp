@@ -17,17 +17,17 @@ FCFSScheduler::FCFSScheduler(int numCores, int quantumTime, std::string schedule
     this->scheduler = scheduler;
 
 	//create 10 processes on startup
-    for (int i = 0; i < 10; i++) {
-        Process::RequirementFlags flags;
-        flags.requireFiles = false;
-        flags.numFiles = 0;
-        flags.memoryRequired = 1000;
-        flags.requireMemory = true;
+    //for (int i = 0; i < 10; i++) {
+    //    Process::RequirementFlags flags;
+    //    flags.requireFiles = false;
+    //    flags.numFiles = 0;
+    //    flags.memoryRequired = 1000;
+    //    flags.requireMemory = true;
 
-        auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
-        process->generateDummyCommands(1000, 2000);
-        this->addProcess(process);
-    }
+    //    auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
+    //    process->generateDummyCommands(1000, 2000);
+    //    this->addProcess(process);
+    //}
 
 }
 

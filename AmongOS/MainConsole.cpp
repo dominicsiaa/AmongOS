@@ -210,18 +210,21 @@ void MainConsole::process() {
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
         String processName = match[1].str();
-        if (FCFSScheduler::getInstance()->findProcess(processName) != nullptr) {
+        std::shared_ptr<Process> existingProcess = FCFSScheduler::getInstance()->findProcess(processName);
+    
+        if (existingProcess != nullptr && existingProcess->getState() != Process::FINISHED) {
             std::cout << "Process with this name already exists!\n";
-			appendToDisplayHistory("Process with this name already exists!");
-        } else
-        {
+            appendToDisplayHistory("Process with this name already exists!");
+        } else {
             std::stringstream timeStamp = createCurrentTimestamp();
             Process::RequirementFlags flags;
             flags.requireFiles = false;
             flags.numFiles = 0;
             flags.requireMemory = true;
             flags.memoryRequired = 1000;
-            auto process = std::make_shared<Process>(0, processName, flags);
+
+            auto process = std::make_shared<Process>(processCounter, processName, flags);
+            processCounter++;
             process->generateDummyCommands(config.min_ins, config.max_ins);
             this->addProcess(process);
             auto newScreen = std::make_shared<BaseScreen>(process, processName);
@@ -234,8 +237,8 @@ void MainConsole::process() {
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
         String processName = match[1].str();
-        std::cout << "Retrieving process: " << processName << std::endl;
-		appendToDisplayHistory("Retrieving process: " + processName);
+     /*   std::cout << "Retrieving process: " << processName << std::endl;
+		appendToDisplayHistory("Retrieving process: " + processName);*/
 
         std::shared_ptr<Process> process = FCFSScheduler::getInstance()->findProcess(processName);
         if(process == nullptr)
@@ -250,8 +253,8 @@ void MainConsole::process() {
             return;
         }
         else {
-			std::cerr << "Process '" << processName << "' has already finished\n";
-			appendToDisplayHistory("Process '" + processName + "' has already finished");
+			std::cerr << "Process '" << processName << "' not found\n";
+			appendToDisplayHistory("Process '" + processName + "' not found");
 		}
     }
     // Handle `screen -ls`
