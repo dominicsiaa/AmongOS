@@ -45,6 +45,16 @@ void MainConsole::onEnabled() {
 }
 
 void MainConsole::runSchedulerTest() {
+    static int counter = 1;
+
+    if (counter == config.batch_process_freq) {
+        counter = 1;
+    }
+    else {
+        counter++;
+        return;
+    }
+
     //std::cout << "Running scheduler test...\n" << processCounter;
     std::stringstream timeStamp = createCurrentTimestamp();
     Process::RequirementFlags flags;
