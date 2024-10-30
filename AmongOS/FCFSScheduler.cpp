@@ -59,6 +59,11 @@ void FCFSScheduler::tick() {
     else if (scheduler == "\"rr\"") {
         this->doRR();
     }
+
+    for(int i = 0; i < workers.size(); i++)
+    {
+        workers[i]->start();
+    }
 }
 
 void FCFSScheduler::doFCFS() {

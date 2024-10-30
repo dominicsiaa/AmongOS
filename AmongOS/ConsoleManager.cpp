@@ -40,6 +40,11 @@ void ConsoleManager::process() const
 	{
 		std::cerr << "No console to process\n";
 	}
+
+	if(FCFSScheduler::getInstance() != nullptr)
+	{
+		FCFSScheduler::getInstance()->tick();
+	}
 }
 
 void ConsoleManager::enterCommand(String command)

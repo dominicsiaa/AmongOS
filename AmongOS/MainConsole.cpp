@@ -70,7 +70,7 @@ void MainConsole::runSchedulerTest() {
     processCounter++;
 
     //delay
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
 void MainConsole::process() {
@@ -136,12 +136,12 @@ void MainConsole::process() {
 
                 FCFSScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec);
 
-            
-                this->schedulerWorker.IThread::start();
-                this->schedulerWorker.update(true);
+                /*this->schedulerWorker.IThread::start();
+                this->schedulerWorker.update(true);*/
 
                 this->isInitialized = true;
-                std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
+
+            	std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
 
             	appendToDisplayHistory("\033[1;32mSuccessfully initialized AmongOS");
             }
@@ -187,6 +187,9 @@ void MainConsole::process() {
             std::cout << "\033[1;32mStopping scheduler test...\n";
             appendToDisplayHistory("\033[1;32mStopping scheduler test...");
             MainConsole::isSchedulerTestRunning = false;
+
+            //DEBUG: display number of processes created
+            std::cout << "Number of processes created: " << processCounter << std::endl;
         }
         else {
             std::cout << "\033[1;31mScheduler test is not running!\n";
