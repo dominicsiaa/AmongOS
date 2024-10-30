@@ -62,22 +62,47 @@ void FCFSScheduler::tick() {
 }
 
 void FCFSScheduler::doFCFS() {
-    if (!readyQueue.empty()) {
-        std::shared_ptr<Process> process = readyQueue.front();
+    //if (!readyQueue.empty()) {
+    //    std::shared_ptr<Process> process = readyQueue.front();
 
-        for (int i = 0; i < core.size(); i++) {
-            if (!core[i]->hasTasks()) {
-                process->setCPUCoreId(i);
-                process->setState(Process::RUNNING);
-                ongoingProcesses.push_back(process);
-                core[i]->addTask(process);
-                readyQueue.pop_front();
-                break;
+    //    for (int i = 0; i < core.size(); i++) {
+    //        if (!core[i]->hasTasks()) {
+    //            process->setCPUCoreId(i);
+    //            process->setState(Process::RUNNING);
+    //            ongoingProcesses.push_back(process);
+    //            core[i]->addTask(process);
+    //            readyQueue.pop_front();
+    //            break;
+    //        }
+    //    }
+    //}
+    //else {
+    //    //std::cout << "No tasks in the ready queue." << std::endl;
+    //}
+
+    for (int i = 0; i < core.size(); i++) {
+
+        if (core[i]->getCurrProcess() != nullptr)
+        {
+            if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
+            {
+                finishedProcesses.push_back(core[i]->getCurrProcess());
+                ongoingProcesses.remove(core[i]->getCurrProcess());
+                core[i]->clearCurrentProcess();
             }
         }
-    }
-    else {
-        //std::cout << "No tasks in the ready queue." << std::endl;
+
+        if (core[i]->hasTasks() || readyQueue.empty())
+        {
+            continue;
+        }
+
+        std::shared_ptr<Process> process = readyQueue.front();
+        process->setCPUCoreId(i);
+        process->setState(Process::RUNNING);
+        ongoingProcesses.push_back(process);
+        core[i]->addTask(process);
+        readyQueue.pop_front();
     }
 }
 
