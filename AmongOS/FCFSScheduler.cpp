@@ -82,7 +82,7 @@ void FCFSScheduler::doFCFS() {
 
     for (int i = 0; i < core.size(); i++) {
 
-        if (core[i]->getCurrProcess() != nullptr)
+        /*if (core[i]->getCurrProcess() != nullptr)
         {
             if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
             {
@@ -90,7 +90,7 @@ void FCFSScheduler::doFCFS() {
                 ongoingProcesses.remove(core[i]->getCurrProcess());
                 core[i]->clearCurrentProcess();
             }
-        }
+        }*/
 
         if (core[i]->hasTasks() || readyQueue.empty())
         {

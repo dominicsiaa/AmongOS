@@ -15,19 +15,11 @@ PrintCommand::PrintCommand(int pid, const String& toPrint) : ICommand(pid, PRINT
 
 void PrintCommand::execute()
 {
-    //std::string folder = "temp"; // Specify the folder name
-    //std::ostringstream filename;
-    //filename << folder << "/pid" << pid << ".txt"; // Construct the filename with folder
+    double result = 0;
+    for (int i = 1; i < 100000; ++i) {
+        result += std::sin(i) * std::cos(i) / (i + 1);
+    }
 
-    //// Ensure the folder exists
-    //std::filesystem::create_directories(folder);
-
-    //std::ofstream outFile(filename.str(), std::ios_base::out | std::ios_base::app); // Open file in append mode, create if it doesn't exist
-    //if (outFile.is_open()) {
-    //    outFile << "\"" << toPrint << "\"" <<  std::endl;
-    //    outFile.close();
-    //}
-    //else {
-    //    std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
-    //}
+    volatile double preventOptimization = result;
+    (void)preventOptimization;
 }

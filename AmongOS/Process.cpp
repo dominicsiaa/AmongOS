@@ -59,9 +59,9 @@ void Process::executeCurrentCommand() const
     //    std::cerr << "Error: Could not open or create file " << filename.str() << std::endl;
     //}
 
-    //if (currentState == FINISHED) {
-    //    // this->commandList[this->commandCounter]->execute();
-    //}
+    if (currentState != FINISHED) {
+        this->commandList[this->commandCounter]->execute();
+    }
 }
 
 void Process::moveToNextLine()
