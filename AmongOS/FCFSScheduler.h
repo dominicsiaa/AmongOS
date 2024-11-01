@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include <string>
+#include <mutex>
 
 class FCFSScheduler : public AScheduler {
 private:
@@ -29,6 +30,8 @@ private:
 	int	quantumTime = 0;
 	int numCores = 0;
 	int currentCore = 0;
+
+	//std::mutex queueMutex;
 
 	void doFCFS();
 	void doRR();

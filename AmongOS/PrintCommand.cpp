@@ -16,7 +16,7 @@ PrintCommand::PrintCommand(int pid, const String& toPrint) : ICommand(pid, PRINT
 void PrintCommand::execute()
 {
     double result = 0;
-    for (int i = 1; i < 100000; ++i) {
+    for (int i = 1; i < 1000; ++i) {
         result += std::sin(i) * std::cos(i) / (i + 1);
     }
 

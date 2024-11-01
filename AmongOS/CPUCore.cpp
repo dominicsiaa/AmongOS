@@ -21,14 +21,17 @@ void CPUCore::addTask(const std::shared_ptr<Process>& process) {
 }
 
 void CPUCore::processTask() {
+    //std::lock_guard<std::mutex> lock(processMutex);
+
 	if (!currProcess) {
 		//std::cout << "No task to process." << std::endl;
 		return;
 	}
+
     if (currProcess->isFinished()) {
         //std::cout << "Finished task: " << currProcess->getName() << std::endl;
 
-        clearCurrentProcess();
+        //clearCurrentProcess();
         return;
     }
     currProcess->executeCurrentCommand();
@@ -48,18 +51,23 @@ bool CPUCore::hasTasks() const {
 }
 
 void CPUCore::clearCurrentProcess() {
-    if (currProcess) {
-        //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
-        if (currProcess->isFinished()) {
-            FCFSScheduler::getInstance()->addFinished(currProcess);
-        }
-        else {
-            FCFSScheduler::getInstance()->addBackToRQ(currProcess);
-        }
+    //if (currProcess) {
+    //    //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
+    //    if (currProcess->isFinished()) {
+    //        FCFSScheduler::getInstance()->addFinished(currProcess);
+    //    }
+    //    else {
+    //        FCFSScheduler::getInstance()->addBackToRQ(currProcess);
+    //    }
 
-        currProcess.reset();
-        timeElapsed = 0;
-    }
+    //    currProcess.reset();
+    //    timeElapsed = 0;
+    //}
+
+    //toClear = true;
+
+    currProcess.reset();
+    timeElapsed = 0;
 }
 
 int CPUCore::getTimeElapsed() {
@@ -67,6 +75,16 @@ int CPUCore::getTimeElapsed() {
 }
 
 void CPUCore::tick() {
+    /*if (toClear) {
+    	clearCurrentProcess();
+		toClear = false;
+    }*/
+
+    /*if(toClear)
+    {
+        currProcess.reset();
+        timeElapsed = 0;
+    }*/
 
     if (delayPerExec == 0) {
         processTask();

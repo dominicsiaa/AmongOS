@@ -82,13 +82,26 @@ void FCFSScheduler::doFCFS() {
 
     for (int i = 0; i < core.size(); i++) {
 
-        /*if (core[i]->getCurrProcess() != nullptr)
+        if (core[i]->getCurrProcess() != nullptr)
         {
             if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
             {
                 finishedProcesses.push_back(core[i]->getCurrProcess());
                 ongoingProcesses.remove(core[i]->getCurrProcess());
                 core[i]->clearCurrentProcess();
+            }
+        }
+
+        /*if(core[i]->toClear)
+        {
+            continue;
+        }
+
+        if(core[i]->hasTasks())
+        {
+            if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
+            {
+                core[i]->toClear = true;
             }
         }*/
 
@@ -97,6 +110,7 @@ void FCFSScheduler::doFCFS() {
             continue;
         }
 
+        //std::lock_guard<std::mutex> lock(queueMutex);
         std::shared_ptr<Process> process = readyQueue.front();
         process->setCPUCoreId(i);
         process->setState(Process::RUNNING);
@@ -107,28 +121,107 @@ void FCFSScheduler::doFCFS() {
 }
 
 void FCFSScheduler::doRR() {
-    if (!readyQueue.empty()) {
-        std::shared_ptr<Process> process = readyQueue.front();
-        
-        for (int i = 0; i < core.size(); i++) {
-            if (core[i]->getTimeElapsed() >= quantumTime) {
+    // DANES IMPLEMENTATION
+
+    //if (!readyQueue.empty()) {
+    //    std::shared_ptr<Process> process = readyQueue.front();
+    //    
+    //    for (int i = 0; i < core.size(); i++) {
+    //        if (core[i]->getTimeElapsed() >= quantumTime) {
+    //            core[i]->clearCurrentProcess();
+    //        }
+
+    //        if (!core[i]->hasTasks()) {
+    //            process->setCPUCoreId(i);
+    //            process->setState(Process::RUNNING);
+    //            ongoingProcesses.push_back(process);
+    //            core[i]->addTask(process);
+    //            readyQueue.pop_front();
+
+    //            if (!readyQueue.empty()) {
+    //                process = readyQueue.front();
+    //            }
+    //            else {
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+
+    // DOMS CORRECTION
+
+    //for (int i = 0; i < core.size(); i++) {
+    //    if (core[i]->toClear)
+    //    {
+    //        continue;
+    //    }
+
+    //    if (core[i]->hasTasks())
+    //    {
+    //        if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
+    //        {
+    //            core[i]->toClear = true;
+    //        }
+    //    }
+
+    //    if (readyQueue.empty()) {
+    //        continue;
+    //    }
+
+    //    if (core[i]->getTimeElapsed() >= quantumTime) {
+    //        core[i]->toClear = true;
+    //    }
+
+    //    if (!core[i]->hasTasks()) {
+    //        //std::lock_guard<std::mutex> lock(queueMutex);
+    //        std::shared_ptr<Process> process = readyQueue.front();
+
+    //        process->setCPUCoreId(i);
+    //        process->setState(Process::RUNNING);
+    //        ongoingProcesses.push_back(process);
+    //        core[i]->addTask(process);
+    //        readyQueue.pop_front();
+    //    }
+    //}
+
+    // NEW IMPLEMENTATION
+
+    for (int i = 0; i < core.size(); i++) {
+
+        if (core[i]->hasTasks())
+        {
+            if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
+            {
+                std::shared_ptr<Process> process = core[i]->getCurrProcess();
                 core[i]->clearCurrentProcess();
+                finishedProcesses.push_back(process);
+                ongoingProcesses.remove(process);
             }
+        }
 
-            if (!core[i]->hasTasks()) {
-                process->setCPUCoreId(i);
-                process->setState(Process::RUNNING);
-                ongoingProcesses.push_back(process);
-                core[i]->addTask(process);
-                readyQueue.pop_front();
+        if (readyQueue.empty()) {
+            continue;
+        }
 
-                if (!readyQueue.empty()) {
-                    process = readyQueue.front();
-                }
-                else {
-                    break;
-                }
+        if (core[i]->hasTasks())
+        {
+            if (core[i]->getTimeElapsed() >= quantumTime) {
+                std::shared_ptr<Process> process = core[i]->getCurrProcess();
+                core[i]->clearCurrentProcess();
+                readyQueue.push_back(process);
+                ongoingProcesses.remove(process);
             }
+        }
+
+        if (!core[i]->hasTasks()) {
+            //std::lock_guard<std::mutex> lock(queueMutex);
+            std::shared_ptr<Process> process = readyQueue.front();
+
+            process->setCPUCoreId(i);
+            process->setState(Process::RUNNING);
+            ongoingProcesses.push_back(process);
+            core[i]->addTask(process);
+            readyQueue.pop_front();
         }
     }
 }
@@ -144,19 +237,23 @@ void FCFSScheduler::addCore(std::shared_ptr<CPUCore> core) {
 }
 
 void FCFSScheduler::addFinished(std::shared_ptr<Process> process) {
+    //std::lock_guard<std::mutex> lock(queueMutex);
     ongoingProcesses.remove(process);
 	finishedProcesses.push_back(process);
 	//std::cout << "Task '" << process->getName() << "' added to the finished queue." << std::endl;
 }
 
 void FCFSScheduler::addBackToRQ(std::shared_ptr<Process> process) {
+    //std::lock_guard<std::mutex> lock(queueMutex);
     ongoingProcesses.remove(process);
-    process->setState(Process::READY);
+    //process->setState(Process::READY);
     readyQueue.push_back(process);
     //std::cout << "Task '" << process->getName() << "' added to the ready queue." << std::endl;
 }
 
 std::string FCFSScheduler::callScreenLS() {
+    //std::lock_guard<std::mutex> lock(queueMutex);
+
     std::ostringstream displayStream;
 
     int totalCores = this->core.size();

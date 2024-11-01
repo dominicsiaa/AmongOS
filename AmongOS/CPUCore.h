@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include "Process.h"
+#include <mutex>
 
 class CPUCore {
 public:
@@ -17,6 +18,9 @@ public:
     int getTimeElapsed();
     std::shared_ptr<Process> getCurrProcess();
     void setDelayPerExec(unsigned int delay) { delayPerExec = delay; tickCounter = delay; }
+
+    //bool toClear = false;
+    std::mutex processMutex;
 
 private:
     static CPUCore* instance;
