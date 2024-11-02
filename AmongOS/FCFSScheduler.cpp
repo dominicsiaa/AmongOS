@@ -196,6 +196,8 @@ void FCFSScheduler::doRR() {
                 core[i]->clearCurrentProcess();
                 finishedProcesses.push_back(process);
                 ongoingProcesses.remove(process);
+
+                //std::cout << "Task '" << process->getName() << "' finished with " << process->getCommandCounter() << "/ " << process->getTotalCommands() << " instructions." << std::endl;
             }
         }
 
@@ -210,6 +212,8 @@ void FCFSScheduler::doRR() {
                 core[i]->clearCurrentProcess();
                 readyQueue.push_back(process);
                 ongoingProcesses.remove(process);
+
+                //std::cout << "Task '" << process->getName() << "' added back to the ready queue with " << process->getCommandCounter() << "/ " << process->getTotalCommands() << " instructions." << std::endl;
             }
         }
 

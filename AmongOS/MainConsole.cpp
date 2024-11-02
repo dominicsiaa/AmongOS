@@ -55,6 +55,11 @@ void MainConsole::runSchedulerTest() {
         return;
     }
 
+    //if(processCounter >= 100)
+    //{
+    //    return;
+    //}
+
     //std::cout << "Running scheduler test...\n" << processCounter;
     std::stringstream timeStamp = createCurrentTimestamp();
     Process::RequirementFlags flags;

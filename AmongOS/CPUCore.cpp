@@ -21,21 +21,21 @@ void CPUCore::addTask(const std::shared_ptr<Process>& process) {
 }
 
 void CPUCore::processTask() {
-    //std::lock_guard<std::mutex> lock(processMutex);
-
 	if (!currProcess) {
-		//std::cout << "No task to process." << std::endl;
 		return;
 	}
 
     if (currProcess->isFinished()) {
-        //std::cout << "Finished task: " << currProcess->getName() << std::endl;
-
-        //clearCurrentProcess();
         return;
     }
+
     currProcess->executeCurrentCommand();
     currProcess->moveToNextLine();
+    if (currProcess->isFinished()) {
+        return;
+    }
+
+    timeElapsed++;
 }
 
 int CPUCore::getCoreID() const {
@@ -88,7 +88,6 @@ void CPUCore::tick() {
 
     if (delayPerExec == 0) {
         processTask();
-        timeElapsed++;
         return;
     }
 
@@ -96,7 +95,6 @@ void CPUCore::tick() {
 
     if (tickCounter >= delayPerExec) {
         processTask();
-        timeElapsed++;
         tickCounter = 0; 
     }
     // std::this_thread::sleep_for(std::chrono::milliseconds(100));
