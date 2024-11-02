@@ -16,16 +16,25 @@ BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) : A
 
 void BaseScreen::onEnabled()
 {
-	std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
-	std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
-	std::cout << std::endl;
-	std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
-	std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl;
-	std::cout << "root:\\>";
+	if (this->attachedProcess->isFinished())
+	{
+		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
+		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl << std::endl;
+		std::cout << "Finished!" << std::endl << std::endl;
+		std::cout << "root:\\>";
+	}
+	else 
+	{
+		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
+		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+		std::cout << std::endl;
+		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
+		std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
+		std::cout << "root:\\>";
+	}
 
 	this->command.clear();
 	this->commandEntered = false;
-
 	this->inputWorker->update(true);
 }
 
@@ -89,14 +98,14 @@ void BaseScreen::printProcessInfo() const
 		std::cout << std::endl;
 		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl << std::endl;
-		std::cout << "Finished!" << std::endl;
+		std::cout << "Finished!" << std::endl << std::endl;
 	}
 	else {
 		std::cout << std::endl;
 		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
 		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl << std::endl;
 		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
-		std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl;
+		std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
 	
 	}
 	//std::cout << "Timestamp: " << timeStream.str() << std::endl;

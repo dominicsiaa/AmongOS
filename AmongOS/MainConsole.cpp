@@ -88,8 +88,8 @@ void MainConsole::process() {
 		return;
 	}
 
-    std::regex screenCommandR("^screen -r (\\w+)");
-    std::regex screenCommandS("^screen -s (\\w+)");
+    std::regex screenCommandR("^screen -r ([\\w-]+)");
+    std::regex screenCommandS("^screen -s ([\\w-]+)");
     std::smatch match;
 	
 	appendToDisplayHistory("\033[1;37mEnter a command: " + command);
@@ -230,7 +230,7 @@ void MainConsole::process() {
         String processName = match[1].str();
         std::shared_ptr<Process> existingProcess = FCFSScheduler::getInstance()->findProcess(processName);
     
-        if (existingProcess != nullptr && existingProcess->getState() != Process::FINISHED) {
+        if (existingProcess != nullptr ) {
             std::cout << "Process with this name already exists!\n";
             appendToDisplayHistory("Process with this name already exists!");
         } else {
@@ -255,26 +255,22 @@ void MainConsole::process() {
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
         String processName = match[1].str();
-     /*   std::cout << "Retrieving process: " << processName << std::endl;
-		appendToDisplayHistory("Retrieving process: " + processName);*/
+        /*   std::cout << "Retrieving process: " << processName << std::endl;
+        appendToDisplayHistory("Retrieving process: " + processName); */
 
         std::shared_ptr<Process> process = FCFSScheduler::getInstance()->findProcess(processName);
-        if(process == nullptr)
-        {
+        if (process == nullptr) {
             std::cerr << "Process '" << processName << "' not found\n";
             appendToDisplayHistory("Process '" + processName + "' not found");
         }
-        else if (process->getState() != Process::FINISHED) {
+        else {
             auto newScreen = std::make_shared<BaseScreen>(process, processName);
             ConsoleManager::getInstance()->registerScreen(newScreen);
             ConsoleManager::getInstance()->switchToScreen(processName);
             return;
         }
-        else {
-			std::cerr << "Process '" << processName << "' not found\n";
-			appendToDisplayHistory("Process '" + processName + "' not found");
-		}
     }
+
     // Handle `screen -ls`
     else if (command == "screen -ls") {
 		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
