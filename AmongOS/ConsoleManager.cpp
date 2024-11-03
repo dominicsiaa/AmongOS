@@ -41,9 +41,9 @@ void ConsoleManager::process() const
 		std::cerr << "No console to process\n";
 	}
 
-	if(FCFSScheduler::getInstance() != nullptr)
+	if(GlobalScheduler::getInstance() != nullptr)
 	{
-		FCFSScheduler::getInstance()->tick();
+		GlobalScheduler::getInstance()->tick();
 	}
 }
 

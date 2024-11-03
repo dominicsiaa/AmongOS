@@ -9,7 +9,7 @@
 
 
 static const String DEBUG_SCHEDULER_NAME = "DebugScheduler";
-static const String FCFS_SCHEDULER_NAME = "FCFSScheduler";
+static const String FCFS_SCHEDULER_NAME = "GlobalScheduler";
 static const String SJF_NOPREEMPT_SCHEDULER_NAME = "SJF-NoPreempt-Scheduler";
 static const String SJF_PREEMPT_SCHEDULER_NAME = "SJF-Preempt-Scheduler";
 

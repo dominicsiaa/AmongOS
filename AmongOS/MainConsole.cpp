@@ -139,7 +139,7 @@ void MainConsole::process() {
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
 
-                FCFSScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec);
+                GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec);
 
                 /*this->schedulerWorker.IThread::start();
                 this->schedulerWorker.update(true);*/
@@ -205,7 +205,7 @@ void MainConsole::process() {
     else if (command == "report-util") {
         std::string logFilePath = "csopesy-log.txt";
 
-        String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+        String screenLsOutput = GlobalScheduler::getInstance()->callScreenLS();
         std::ofstream logFile(logFilePath, std::ios::out | std::ios::trunc);
 
         if (logFile.is_open()) {
@@ -228,7 +228,7 @@ void MainConsole::process() {
     // Handle `screen -s <name>`
     else if (std::regex_search(command, match, screenCommandS)) {
         String processName = match[1].str();
-        std::shared_ptr<Process> existingProcess = FCFSScheduler::getInstance()->findProcess(processName);
+        std::shared_ptr<Process> existingProcess = GlobalScheduler::getInstance()->findProcess(processName);
     
         if (existingProcess != nullptr ) {
             std::cout << "Process with this name already exists!\n";
@@ -258,7 +258,7 @@ void MainConsole::process() {
         /*   std::cout << "Retrieving process: " << processName << std::endl;
         appendToDisplayHistory("Retrieving process: " + processName); */
 
-        std::shared_ptr<Process> process = FCFSScheduler::getInstance()->findProcess(processName);
+        std::shared_ptr<Process> process = GlobalScheduler::getInstance()->findProcess(processName);
         if (process == nullptr) {
             std::cerr << "Process '" << processName << "' not found\n";
             appendToDisplayHistory("Process '" + processName + "' not found");
@@ -273,7 +273,7 @@ void MainConsole::process() {
 
     // Handle `screen -ls`
     else if (command == "screen -ls") {
-		String screenLsOutput = FCFSScheduler::getInstance()->callScreenLS();
+		String screenLsOutput = GlobalScheduler::getInstance()->callScreenLS();
         std::cout << screenLsOutput;
         appendToDisplayHistory(screenLsOutput);
 
@@ -299,7 +299,7 @@ void MainConsole::enterCommand(String command)
 }
 
 void MainConsole::addProcess(std::shared_ptr<Process> newProcess) {
-    FCFSScheduler::getInstance()->addProcess(newProcess);
+    GlobalScheduler::getInstance()->addProcess(newProcess);
 }
 
 std::stringstream MainConsole::createCurrentTimestamp() const {

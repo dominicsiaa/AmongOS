@@ -55,17 +55,17 @@
     <ClCompile Include="SchedulerWorker.cpp">
       <Filter>Scheduling</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalScheduler.cpp">
-      <Filter>Scheduling</Filter>
-    </ClCompile>
     <ClCompile Include="CPUCore.cpp">
       <Filter>Scheduling</Filter>
     </ClCompile>
     <ClCompile Include="CPUCoreWorker.cpp">
       <Filter>Scheduling</Filter>
     </ClCompile>
-    <ClCompile Include="FCFSScheduler.cpp">
+    <ClCompile Include="GlobalScheduler.cpp">
       <Filter>Scheduling</Filter>
+    </ClCompile>
+    <ClCompile Include="InputWorker.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,15 +105,13 @@
     <ClInclude Include="GlobalScheduler.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
-    <ClInclude Include="FCFSScheduler.h">
-      <Filter>Scheduling</Filter>
-    </ClInclude>
     <ClInclude Include="CPUCore.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
     <ClInclude Include="CPUCoreWorker.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
+    <ClInclude Include="InputWorker.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />

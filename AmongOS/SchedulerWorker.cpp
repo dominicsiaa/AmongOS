@@ -1,5 +1,5 @@
 #include "SchedulerWorker.h"
-#include "FCFSScheduler.h"
+#include "GlobalScheduler.h"
 
 void SchedulerWorker::update(bool isRunning)
 {
@@ -9,11 +9,11 @@ void SchedulerWorker::update(bool isRunning)
 
 void SchedulerWorker::run()
 {
-	FCFSScheduler::getInstance()->tick();
+	GlobalScheduler::getInstance()->tick();
 
 	/*while (this->isRunning)
 	{
-		FCFSScheduler::getInstance()->tick();
-		FCFSScheduler::getInstance()->sleep(200);
+		GlobalScheduler::getInstance()->tick();
+		GlobalScheduler::getInstance()->sleep(200);
 	}*/
 }

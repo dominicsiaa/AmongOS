@@ -1,5 +1,5 @@
 #include "CPUCore.h"
-#include "FCFSScheduler.h"
+#include "GlobalScheduler.h"
 
 CPUCore* CPUCore::instance = nullptr;
 
@@ -54,10 +54,10 @@ void CPUCore::clearCurrentProcess() {
     //if (currProcess) {
     //    //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
     //    if (currProcess->isFinished()) {
-    //        FCFSScheduler::getInstance()->addFinished(currProcess);
+    //        GlobalScheduler::getInstance()->addFinished(currProcess);
     //    }
     //    else {
-    //        FCFSScheduler::getInstance()->addBackToRQ(currProcess);
+    //        GlobalScheduler::getInstance()->addBackToRQ(currProcess);
     //    }
 
     //    currProcess.reset();

@@ -4,7 +4,7 @@
 #include "typedefRepo.h"
 #include "InputWorker.h"
 #include "SchedulerWorker.h"
-#include "FCFSScheduler.h"
+#include "GlobalScheduler.h"
 #include <vector>
 #include <memory>
 
