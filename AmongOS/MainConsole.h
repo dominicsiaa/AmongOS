@@ -20,7 +20,6 @@ public:
     void enterCommand(String command);
 
     void addProcess(std::shared_ptr<Process> newProcess);
-    void listProcesses() const;
     void appendToDisplayHistory(const std::string text);
 
     static bool isSchedulerTestRunning;
