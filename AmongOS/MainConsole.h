@@ -15,7 +15,6 @@ public:
     ~MainConsole() = default;
 
     void onEnabled() override;
-    void display() override;
     void process() override;
     void enterCommand(String command);
 

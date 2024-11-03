@@ -10,7 +10,6 @@ public:
 
 	String getName();
 	virtual void onEnabled() = 0;
-	virtual void display() = 0;
 	virtual void process() = 0;
 	virtual void enterCommand(String command) = 0;
 

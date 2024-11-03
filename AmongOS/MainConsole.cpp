@@ -279,8 +279,6 @@ void MainConsole::process() {
     this->inputWorker->update(true);
 }
 
-void MainConsole::display() {}
-
 void MainConsole::enterCommand(String command)
 {
     this->command = command;

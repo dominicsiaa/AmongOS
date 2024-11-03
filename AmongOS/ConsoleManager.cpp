@@ -23,7 +23,6 @@ void ConsoleManager::drawConsole() const
 {
 	if (this->currentConsole != nullptr)
 	{
-		this->currentConsole->display();
 	} else
 	{
 		std::cerr << "No console to display" << std::endl;

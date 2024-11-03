@@ -67,10 +67,6 @@ void BaseScreen::enterCommand(String command)
 	this->commandEntered = true;
 }
 
-void BaseScreen::display()
-{
-	
-}
 
 void BaseScreen::printProcessInfo() const
 {

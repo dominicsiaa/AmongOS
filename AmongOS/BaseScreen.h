@@ -11,7 +11,6 @@ public:
 	BaseScreen(std::shared_ptr<Process> process, String processName);
 	void onEnabled() override;
 	void process() override;
-	void display() override;
 	void enterCommand(String command) override;
 
 private:
