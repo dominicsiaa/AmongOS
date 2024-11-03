@@ -16,23 +16,13 @@ BaseScreen::BaseScreen(std::shared_ptr<Process> process, String processName) : A
 
 void BaseScreen::onEnabled()
 {
-	if (this->attachedProcess->isFinished())
-	{
-		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
-		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl << std::endl;
-		std::cout << "Finished!" << std::endl << std::endl;
-		std::cout << "root:\\>";
-	}
-	else 
-	{
-		std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
-		std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
-		std::cout << std::endl;
-		std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
-		std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
-		std::cout << "root:\\>";
-	}
-
+	std::cout << "Process Name: " << this->attachedProcess->getName() << std::endl;
+	std::cout << "ID: " << this->attachedProcess->getPID() << std::endl;
+	std::cout << std::endl;
+	std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
+	std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
+	std::cout << "root:\\>";
+	
 	this->command.clear();
 	this->commandEntered = false;
 	this->inputWorker->update(true);

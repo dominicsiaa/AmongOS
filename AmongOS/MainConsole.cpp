@@ -217,7 +217,7 @@ void MainConsole::process() {
         String processName = match[1].str();
         std::shared_ptr<Process> existingProcess = GlobalScheduler::getInstance()->findProcess(processName);
     
-        if (existingProcess != nullptr ) {
+        if (existingProcess != nullptr && existingProcess->getState() != Process::FINISHED){
             std::cout << "Process with this name already exists!\n";
             appendToDisplayHistory("Process with this name already exists!");
         } else {
@@ -243,15 +243,20 @@ void MainConsole::process() {
     else if (std::regex_search(command, match, screenCommandR)) {
         String processName = match[1].str();
         std::shared_ptr<Process> process = GlobalScheduler::getInstance()->findProcess(processName);
-        if (process == nullptr) {
-            std::cerr << "Process '" << processName << "' not found\n";
+        if (process == nullptr)
+        {
+            std::cerr << "Process " << processName << " not found\n";
             appendToDisplayHistory("Process '" + processName + "' not found");
         }
-        else {
+        else if (process->getState() != Process::FINISHED) {
             auto newScreen = std::make_shared<BaseScreen>(process, processName);
             ConsoleManager::getInstance()->registerScreen(newScreen);
             ConsoleManager::getInstance()->switchToScreen(processName);
             return;
+        }
+        else {
+            std::cerr << "Process " << processName << " not found\n";
+            appendToDisplayHistory("Process " + processName + " not found");
         }
     }
 
