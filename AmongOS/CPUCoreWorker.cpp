@@ -15,10 +15,7 @@ void CPUCoreWorker::run() {
         return;
     }
 
-    //core->tick();
-
     while (this->isRunning) {
         core->tick();
-        //IThread::sleep(100); // Sleep to simulate work and prevent busy-waiting
     }
 }

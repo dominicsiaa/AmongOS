@@ -55,12 +55,6 @@ void MainConsole::runSchedulerTest() {
         return;
     }
 
-    //if(processCounter >= 100)
-    //{
-    //    return;
-    //}
-
-    //std::cout << "Running scheduler test...\n" << processCounter;
     std::stringstream timeStamp = createCurrentTimestamp();
     Process::RequirementFlags flags;
     flags.requireFiles = false;
@@ -68,14 +62,11 @@ void MainConsole::runSchedulerTest() {
     flags.memoryRequired = 1000;
     flags.requireMemory = true;
 
-    // Create and add process to the scheduler
+
     auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
     process->generateDummyCommands(config.min_ins, config.max_ins);
     this->addProcess(process);
     processCounter++;
-
-    //delay
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
 void MainConsole::process() {
@@ -140,10 +131,6 @@ void MainConsole::process() {
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
 
                 GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec);
-
-                /*this->schedulerWorker.IThread::start();
-                this->schedulerWorker.update(true);*/
-
                 this->isInitialized = true;
 
             	std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
@@ -194,7 +181,7 @@ void MainConsole::process() {
             MainConsole::isSchedulerTestRunning = false;
 
             //DEBUG: display number of processes created
-            std::cout << "Number of processes created: " << processCounter << std::endl;
+            //std::cout << "Number of processes created: " << processCounter << std::endl;
         }
         else {
             std::cout << "\033[1;31mScheduler test is not running!\n";
@@ -255,9 +242,6 @@ void MainConsole::process() {
     // Handle `screen -r <name>`
     else if (std::regex_search(command, match, screenCommandR)) {
         String processName = match[1].str();
-        /*   std::cout << "Retrieving process: " << processName << std::endl;
-        appendToDisplayHistory("Retrieving process: " + processName); */
-
         std::shared_ptr<Process> process = GlobalScheduler::getInstance()->findProcess(processName);
         if (process == nullptr) {
             std::cerr << "Process '" << processName << "' not found\n";

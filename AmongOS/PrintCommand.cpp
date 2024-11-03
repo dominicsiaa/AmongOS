@@ -4,9 +4,6 @@
 #include <sstream>
 #include <filesystem> 
 
-//#include "MessageBuffer.h"
-
-
 PrintCommand::PrintCommand(int pid, const String& toPrint) : ICommand(pid, PRINT)
 {
 	this->toPrint = toPrint;

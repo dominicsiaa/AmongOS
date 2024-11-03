@@ -19,7 +19,6 @@ public:
     void process() override;
     void enterCommand(String command);
 
-    // Process Table related functions
     void addProcess(std::shared_ptr<Process> newProcess);
     void listProcesses() const;
     void appendToDisplayHistory(const std::string text);

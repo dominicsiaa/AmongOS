@@ -31,8 +31,6 @@ private:
 	int numCores = 0;
 	int currentCore = 0;
 
-	//std::mutex queueMutex;
-
 	void doFCFS();
 	void doRR();
 

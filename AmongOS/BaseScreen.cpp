@@ -84,15 +84,6 @@ void BaseScreen::display()
 
 void BaseScreen::printProcessInfo() const
 {
-	// Gets the current time
-	//auto now = std::time(nullptr);
-	//std::tm localTime;
-	//localtime_s(&localTime, &now);
-
-	// Format the time as MM/DD/YYYY, HH:MM:SS AM/PM
-	//std::stringstream timeStream;
-	//timeStream << std::put_time(&localTime, "%m/%d/%Y, %I:%M:%S %p");
-
 	if (this->attachedProcess->isFinished())
 	{
 		std::cout << std::endl;
@@ -108,5 +99,4 @@ void BaseScreen::printProcessInfo() const
 		std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
 	
 	}
-	//std::cout << "Timestamp: " << timeStream.str() << std::endl;
 }

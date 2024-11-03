@@ -19,7 +19,6 @@ public:
     std::shared_ptr<Process> getCurrProcess();
     void setDelayPerExec(unsigned int delay) { delayPerExec = delay; tickCounter = delay; }
 
-    //bool toClear = false;
     std::mutex processMutex;
 
 private:

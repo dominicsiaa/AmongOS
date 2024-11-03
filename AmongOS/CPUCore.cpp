@@ -3,9 +3,7 @@
 
 CPUCore* CPUCore::instance = nullptr;
 
-CPUCore::CPUCore(int id) : coreID(id) {
-    //std::cout << "CPU Core " << coreID << " initialized." << std::endl;
-}
+CPUCore::CPUCore(int id) : coreID(id) {}
 
 CPUCore* CPUCore::getInstance(int id) {
     if (instance == nullptr) {
@@ -17,7 +15,6 @@ CPUCore* CPUCore::getInstance(int id) {
 void CPUCore::addTask(const std::shared_ptr<Process>& process) {
     currProcess = process;
     process->setStartTime();
-    //astd::cout << "Task '" << currProcess->getName() << "' added to CPU Core " << coreID << "." << std::endl;
 }
 
 void CPUCore::processTask() {
@@ -51,21 +48,6 @@ bool CPUCore::hasTasks() const {
 }
 
 void CPUCore::clearCurrentProcess() {
-    //if (currProcess) {
-    //    //std::cout << "Clearing current task: " << currProcess->getName() << std::endl;
-    //    if (currProcess->isFinished()) {
-    //        GlobalScheduler::getInstance()->addFinished(currProcess);
-    //    }
-    //    else {
-    //        GlobalScheduler::getInstance()->addBackToRQ(currProcess);
-    //    }
-
-    //    currProcess.reset();
-    //    timeElapsed = 0;
-    //}
-
-    //toClear = true;
-
     currProcess.reset();
     timeElapsed = 0;
 }
@@ -75,16 +57,6 @@ int CPUCore::getTimeElapsed() {
 }
 
 void CPUCore::tick() {
-    /*if (toClear) {
-    	clearCurrentProcess();
-		toClear = false;
-    }*/
-
-    /*if(toClear)
-    {
-        currProcess.reset();
-        timeElapsed = 0;
-    }*/
 
     if (delayPerExec == 0) {
         processTask();
@@ -97,5 +69,4 @@ void CPUCore::tick() {
         processTask();
         tickCounter = 0; 
     }
-    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
