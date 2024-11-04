@@ -31,25 +31,24 @@ public:
     ~Process() = default;
 
     void addCommand(ICommand::CommandType commandType);
+    void generateDummyCommands(unsigned int min, unsigned int max);
     void executeCurrentCommand() const;
     void moveToNextLine();
-    void setStartTime();
-
-    std::chrono::time_point<std::chrono::system_clock> getStartTime() const;
 
     bool isFinished();
+
     int getRemainingTime() const;
     int getCommandCounter() const;
     int getPID() const;
     int getCPUCoreId() const;
     int getTotalCommands() const;
+    std::chrono::time_point<std::chrono::system_clock> getStartTime() const;
     ProcessState getState() const;
     String getName() const;
 
+    void setStartTime();
     void setCPUCoreId(int coreId);
     void setState(ProcessState state);
-
-    void generateDummyCommands(unsigned int min, unsigned int max);
 
 private:
     int pid;

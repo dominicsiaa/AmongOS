@@ -30,16 +30,16 @@ protected:
 
 private:
     SchedulerWorker schedulerWorker;
-    std::shared_ptr<InputWorker> inputWorker;
 
+    std::shared_ptr<InputWorker> inputWorker;
     bool commandEntered = false;
     String command;
 
     std::stringstream createCurrentTimestamp() const;
     String displayHistory;
-    bool isInitialized;
     unsigned int processCounter = 0;
 
+    bool isInitialized;
     struct Config {
         unsigned int num_cpu = 4;
         String scheduler = "rr"; 
