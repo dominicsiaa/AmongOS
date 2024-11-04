@@ -65,7 +65,7 @@
       <Filter>Scheduling</Filter>
     </ClCompile>
     <ClCompile Include="InputWorker.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Console</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,10 +111,13 @@
     <ClInclude Include="CPUCoreWorker.h">
       <Filter>Scheduling</Filter>
     </ClInclude>
-    <ClInclude Include="InputWorker.h" />
+    <ClInclude Include="InputWorker.h">
+      <Filter>Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
     <Text Include="csopesy-log.txt" />
+    <Text Include="README.txt" />
   </ItemGroup>
 </Project>
