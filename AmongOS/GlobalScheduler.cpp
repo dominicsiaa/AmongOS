@@ -1,6 +1,14 @@
 #include "GlobalScheduler.h"
 
-GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay) : AScheduler(FCFS, -1, "GlobalScheduler") {
+#include <filesystem>
+
+#include "FlatMemoryAllocator.h"
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem) : AScheduler(FCFS, -1, "GlobalScheduler") {
 
     this->numCores = numCores;
     for (int i = 0; i < numCores; i++)
@@ -16,6 +24,7 @@ GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string sche
     this->quantumTime = quantumTime;
     this->scheduler = scheduler;
 
+    this->memoryAllocator = std::make_shared<FlatMemoryAllocator>(max_overall_mem);
 }
 
 GlobalScheduler* GlobalScheduler::sharedInstance = nullptr;
@@ -24,9 +33,9 @@ GlobalScheduler* GlobalScheduler::getInstance()
 	return sharedInstance;
 }
 
-void GlobalScheduler::initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay)
+void GlobalScheduler::initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem)
 {
-	sharedInstance = new GlobalScheduler(numCores, quantumTime, scheduler, delay);
+	sharedInstance = new GlobalScheduler(numCores, quantumTime, scheduler, delay, max_overall_mem);
 }
 
 void GlobalScheduler::addProcess(std::shared_ptr<Process> process) {
@@ -77,7 +86,8 @@ void GlobalScheduler::doFCFS() {
 }
 
 void GlobalScheduler::doRR() {
-    
+    static int counter = 0;
+
     for (int i = 0; i < core.size(); i++) {
 
         if (core[i]->hasTasks())
@@ -112,6 +122,29 @@ void GlobalScheduler::doRR() {
             ongoingProcesses.push_back(process);
             core[i]->addTask(process);
             readyQueue.pop_front();
+        }
+    }
+
+    counter++;
+    if (counter == quantumTime) {
+        counter = 0;
+        this->quantumCounter++;
+
+        String folder = "memory_files";
+        std::ostringstream filenameStream;
+        filenameStream << folder << "/memory_stamp_" << quantumCounter << ".txt";
+        std::string filename = filenameStream.str();
+
+    	std::filesystem::create_directories(folder);
+
+        std::ofstream file(filename);
+
+        if (file.is_open()) {
+        	file << memoryAllocator->visualizeProcessesInMemory();
+            file.close();
+        }
+        else {
+            std::cerr << "Error opening file: " << filename << std::endl;
         }
     }
 }

@@ -17,6 +17,9 @@
     <Filter Include="Scheduling\temp">
       <UniqueIdentifier>{0bd54233-8bfc-4215-9709-420a58fe03d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{76563aa7-7267-406f-ac78-042cc593457d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AmongOS.cpp">
@@ -67,6 +70,12 @@
     <ClCompile Include="InputWorker.cpp">
       <Filter>Console</Filter>
     </ClCompile>
+    <ClCompile Include="IMemoryAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="FlatMemoryAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleManager.h">
@@ -113,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="InputWorker.h">
       <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="IMemoryAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="FlatMemoryAllocator.h">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

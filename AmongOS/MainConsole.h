@@ -48,5 +48,9 @@ private:
         unsigned int min_ins = 1000;
         unsigned int max_ins = 2000;
         unsigned int delay_per_exec = 0;
+        size_t max_overall_mem = 16384;
+        size_t mem_per_frame = 16;
+        size_t mem_per_proc = 4096;
+
     } config;
 };

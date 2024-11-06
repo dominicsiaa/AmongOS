@@ -71,6 +71,11 @@ void MainConsole::runSchedulerTest() {
 
 void MainConsole::process() {
 
+    //sleep for 1 ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    //std::this_thread::sleep_for(std::chrono::microseconds(1));
+
     if (MainConsole::isSchedulerTestRunning) {
         runSchedulerTest();
     }
@@ -129,8 +134,11 @@ void MainConsole::process() {
                 this->config.min_ins = std::stoul(configMap["min-ins"]);
                 this->config.max_ins = std::stoul(configMap["max-ins"]);
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
+                this->config.max_overall_mem = std::stoul(configMap["max-overall-mem"]);
+                this->config.mem_per_frame = std::stoul(configMap["mem-per-frame"]);
+                this->config.mem_per_proc = std::stoul(configMap["mem-per-proc"]);
 
-                GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec);
+                GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec, this->config.max_overall_mem);
                 this->isInitialized = true;
 
             	std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";

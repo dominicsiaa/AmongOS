@@ -138,8 +138,10 @@
     <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="CPUCore.cpp" />
     <ClCompile Include="CPUCoreWorker.cpp" />
+    <ClCompile Include="FlatMemoryAllocator.cpp" />
     <ClCompile Include="GlobalScheduler.cpp" />
     <ClCompile Include="ICommand.cpp" />
+    <ClCompile Include="IMemoryAllocator.cpp" />
     <ClCompile Include="InputWorker.cpp" />
     <ClCompile Include="IThread.cpp" />
     <ClCompile Include="main.cpp" />
@@ -155,8 +157,10 @@
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="CPUCore.h" />
     <ClInclude Include="CPUCoreWorker.h" />
+    <ClInclude Include="FlatMemoryAllocator.h" />
     <ClInclude Include="GlobalScheduler.h" />
     <ClInclude Include="ICommand.h" />
+    <ClInclude Include="IMemoryAllocator.h" />
     <ClInclude Include="InputWorker.h" />
     <ClInclude Include="IThread.h" />
     <ClInclude Include="MainConsole.h" />

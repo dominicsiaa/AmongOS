@@ -16,7 +16,7 @@ public:
         bool requireFiles;
         int numFiles;
         bool requireMemory;
-        int memoryRequired;
+        size_t memoryRequired;
     };
 
     enum ProcessState

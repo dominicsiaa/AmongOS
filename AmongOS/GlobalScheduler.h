@@ -7,15 +7,13 @@
 #include "CPUCore.h"
 #include "CPUCoreWorker.h"
 #include "Process.h"
+#include "IMemoryAllocator.h"
 #include <queue>
 #include <string>
-#include <iostream>
-#include <string>
-#include <mutex>
 
 class GlobalScheduler : public AScheduler {
 private:
-	GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay);
+	GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem);
 	~GlobalScheduler() = default;
 	static GlobalScheduler* sharedInstance;
 
@@ -26,8 +24,12 @@ private:
 	std::vector<std::shared_ptr<CPUCore>> core;
 	std::vector<std::shared_ptr<CPUCoreWorker>> workers;
 
+	std::shared_ptr<IMemoryAllocator> memoryAllocator;
+
 	std::string scheduler;
 	int	quantumTime = 0;
+	int quantumCounter = 0;
+
 	int numCores = 0;
 	int currentCore = 0;
 
@@ -36,7 +38,7 @@ private:
 
 public:
 	static GlobalScheduler* getInstance();
-	static void initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay);
+	static void initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem);
 	static void destroy(); 
 
 	void addProcess(std::shared_ptr<Process> process) override;
