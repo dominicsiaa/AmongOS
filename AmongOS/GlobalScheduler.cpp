@@ -24,6 +24,19 @@ GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string sche
     this->quantumTime = quantumTime;
     this->scheduler = scheduler;
 
+    for (int i = 0; i < 10; i++) {
+        Process::RequirementFlags flags;
+        flags.requireFiles = false;
+        flags.numFiles = 0;
+        flags.memoryRequired = 4096;
+        flags.requireMemory = true;
+
+        auto process = std::make_shared<Process>(i, "Process" + std::to_string(i), flags);
+        process->generateDummyCommands(100, 100);
+        this->addProcess(process);
+    }
+
+
     this->memoryAllocator = std::make_shared<FlatMemoryAllocator>(max_overall_mem);
 }
 
@@ -95,6 +108,8 @@ void GlobalScheduler::doRR() {
             if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
             {
                 std::shared_ptr<Process> process = core[i]->getCurrProcess();
+
+                memoryAllocator->deallocate(process->getPID());
                 core[i]->clearCurrentProcess();
                 finishedProcesses.push_back(process);
                 ongoingProcesses.remove(process);
@@ -109,6 +124,8 @@ void GlobalScheduler::doRR() {
         {
             if (core[i]->getTimeElapsed() >= quantumTime) {
                 std::shared_ptr<Process> process = core[i]->getCurrProcess();
+
+                memoryAllocator->deallocate(process->getPID());
                 core[i]->clearCurrentProcess();
                 readyQueue.push_back(process);
                 ongoingProcesses.remove(process);
@@ -118,8 +135,10 @@ void GlobalScheduler::doRR() {
         if (!core[i]->hasTasks()) {
             std::shared_ptr<Process> process = readyQueue.front();
 
-            if (memoryAllocator->allocate(process->getSize(), process->getPID())) {
-
+            if (!memoryAllocator->allocate(process->getSize(), process->getPID())) {
+                readyQueue.pop_front();
+                readyQueue.push_back(process);
+                break;
             }
 
             process->setCPUCoreId(i);
