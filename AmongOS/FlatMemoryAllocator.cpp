@@ -113,10 +113,9 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 	memCho << "----end---- = " << maximumSize << "\n\n";
 
 	for (size_t i = 0; i < numProc; i++) {
-		memCho << usedMemory[i].processId
-			<< usedMemory[i].startAddress << "\n"
+		memCho << usedMemory[i].endAddress << "\n"
 			<< usedMemory[i].processId << "\n"
-			<< usedMemory[i].endAddress << "\n\n";
+			<< usedMemory[i].startAddress << "\n\n";
 	}
 
 	memCho << "----start---- = 0\n";
