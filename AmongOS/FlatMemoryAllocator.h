@@ -24,7 +24,7 @@ public:
 	FlatMemoryAllocator(size_t maximumSize);
 	~FlatMemoryAllocator();
 
-	void* allocate(size_t size, int pid) override;
+	bool allocate(size_t size, int pid) override;
 	void deallocate(int pid) override;
 	String visualizeProcessesInMemory() override;
 

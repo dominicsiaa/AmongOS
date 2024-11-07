@@ -117,6 +117,11 @@ void GlobalScheduler::doRR() {
 
         if (!core[i]->hasTasks()) {
             std::shared_ptr<Process> process = readyQueue.front();
+
+            if (memoryAllocator->allocate(process->getSize(), process->getPID())) {
+
+            }
+
             process->setCPUCoreId(i);
             process->setState(Process::RUNNING);
             ongoingProcesses.push_back(process);

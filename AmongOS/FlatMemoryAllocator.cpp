@@ -13,7 +13,7 @@ FlatMemoryAllocator::~FlatMemoryAllocator()
 	memory.clear();
 }
 
-void* FlatMemoryAllocator::allocate(size_t size, int pid)
+bool FlatMemoryAllocator::allocate(size_t size, int pid)
 {
 	for (size_t i = 0; i < freeMemory.size(); i++) {
 		size_t blockSize = freeMemory[i].getSize();
@@ -33,7 +33,7 @@ void* FlatMemoryAllocator::allocate(size_t size, int pid)
 			freeMemory[i].startAddress = endAddress + 1;
 		}
 
-		break;
+		return true;
 	}
 	
 	//for (size_t i = 0; i < maximumSize - size + 1; i++)
@@ -53,7 +53,7 @@ void* FlatMemoryAllocator::allocate(size_t size, int pid)
 	//	}
 	//}
 
-	return nullptr;
+	return false;
 }
 
 void FlatMemoryAllocator::deallocate(int pid)
