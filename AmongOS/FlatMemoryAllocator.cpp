@@ -64,9 +64,7 @@ void FlatMemoryAllocator::deallocate(int pid)
 		}
 
 		MemoryBlock deallocatedBlock = usedMemory[i];
-
 		usedMemory.erase(usedMemory.begin() + i);
-
 		freeMemory.push_back(deallocatedBlock);
 	}
 
