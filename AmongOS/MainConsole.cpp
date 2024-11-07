@@ -59,7 +59,7 @@ void MainConsole::runSchedulerTest() {
     Process::RequirementFlags flags;
     flags.requireFiles = false;
     flags.numFiles = 0;
-    flags.memoryRequired = 1000;
+    flags.memoryRequired = config.mem_per_proc;
     flags.requireMemory = true;
 
 
@@ -234,7 +234,7 @@ void MainConsole::process() {
             flags.requireFiles = false;
             flags.numFiles = 0;
             flags.requireMemory = true;
-            flags.memoryRequired = 1000;
+            flags.memoryRequired = config.mem_per_proc;
 
             auto process = std::make_shared<Process>(processCounter, processName, flags);
             processCounter++;
