@@ -42,6 +42,7 @@ public:
     int getPID() const;
     int getCPUCoreId() const;
     int getTotalCommands() const;
+    size_t getSize() const;
     std::chrono::time_point<std::chrono::system_clock> getStartTime() const;
     ProcessState getState() const;
     String getName() const;

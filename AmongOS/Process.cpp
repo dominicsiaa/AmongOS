@@ -96,6 +96,11 @@ std::string Process::getName() const
     return name;
 }
 
+size_t Process::getSize() const
+{
+    return requirementFlags.memoryRequired;
+}
+
 void Process::setCPUCoreId(int coreId)
 {
 	cpuCoreID = coreId;
