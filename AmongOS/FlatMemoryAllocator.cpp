@@ -92,13 +92,30 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 {
 	std::ostringstream memCho;
 
-	memCho << "----end---- = " << maximumSize << "\n";
+	auto now = std::chrono::system_clock::now();
+	std::time_t timeStamp = std::chrono::system_clock::to_time_t(now);
 
-	for (size_t i = 0; i < usedMemory.size(); i++) {
-		memCho << "Process ID: " << usedMemory[i].processId
-			<< ", Start: " << usedMemory[i].startAddress
-			<< ", End: " << usedMemory[i].endAddress
-			<< ", Size: " << usedMemory[i].getSize() << "\n";
+	std::tm timeInfo;
+	localtime_s(&timeInfo, &timeStamp);
+
+	size_t externFrag = 0;
+	for (size_t i = 0; i < freeMemory.size(); i++) {
+		externFrag += freeMemory[i].getSize();
+	}
+
+	int numProc = usedMemory.size();
+
+	memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
+	memCho << "Number of processes in memory: " << numProc << "\n";
+	memCho << "Total external fragmentation in KB: " << externFrag << "\n\n";
+
+	memCho << "----end---- = " << maximumSize << "\n\n";
+
+	for (size_t i = 0; i < numProc; i++) {
+		memCho << usedMemory[i].processId
+			<< usedMemory[i].startAddress << "\n"
+			<< usedMemory[i].processId << "\n"
+			<< usedMemory[i].endAddress << "\n\n";
 	}
 
 	memCho << "----start---- = 0\n";
