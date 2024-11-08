@@ -112,7 +112,6 @@ void GlobalScheduler::doRR() {
             if (core[i]->getTimeElapsed() >= quantumTime) {
                 std::shared_ptr<Process> process = core[i]->getCurrProcess();
 
-                memoryAllocator->deallocate(process->getPID());
                 core[i]->clearCurrentProcess();
                 readyQueue.push_back(process);
                 ongoingProcesses.remove(process);
