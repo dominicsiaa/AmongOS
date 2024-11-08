@@ -99,6 +99,13 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 
 	size_t externFrag = 0;
 	for (size_t i = 0; i < freeMemory.size(); i++) {
+		std::cout << i << ": " << freeMemory[i].startAddress << ", " << freeMemory[i].endAddress << "\n";
+	}
+
+	for (size_t i = 0; i < freeMemory.size(); i++) {
+		/*if (freeMemory[i].endAddress == maximumSize) {
+			break;
+		}*/
 		externFrag += freeMemory[i].getSize();
 	}
 
@@ -129,5 +136,5 @@ void FlatMemoryAllocator::initializeMemory()
 	//	allocationMap[i] = false;
 	//}
 
-	freeMemory.push_back(MemoryBlock(0, maximumSize, -1));
+	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1));
 }
