@@ -100,9 +100,9 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 	size_t externFrag = 0;
 
 	for (size_t i = 0; i < freeMemory.size(); i++) {
-		/*if (freeMemory[i].endAddress == maximumSize) {
-			break;
-		}*/
+		if (freeMemory[i].endAddress == maximumSize - 1) {
+			continue;
+		}
 		externFrag += freeMemory[i].getSize();
 	}
 
