@@ -15,6 +15,12 @@ FlatMemoryAllocator::~FlatMemoryAllocator()
 
 bool FlatMemoryAllocator::allocate(size_t size, int pid)
 {
+	for (size_t i = 0; i < usedMemory.size(); i++) {
+		if (pid == usedMemory[i].processId) {
+			return true;
+		}
+	}
+
 	for (size_t i = 0; i < freeMemory.size(); i++) {
 		size_t blockSize = freeMemory[i].getSize();
 

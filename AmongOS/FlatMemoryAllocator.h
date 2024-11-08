@@ -6,6 +6,7 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 
 struct MemoryBlock{
 	size_t startAddress;
