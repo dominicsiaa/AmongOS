@@ -13,11 +13,20 @@ FlatMemoryAllocator::~FlatMemoryAllocator()
 	memory.clear();
 }
 
+bool compareByAddress(const MemoryBlock& a, const MemoryBlock& b) {
+	return a.startAddress < b.startAddress;
+}
+
+
 void FlatMemoryAllocator::mergeFree()
 {
 	if (freeMemory.size() <= 1) {
 		return;
 	}
+
+	std::sort(freeMemory.begin(), freeMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+		return a.startAddress < b.startAddress;
+	});
 
 	for (size_t i = 0; i < freeMemory.size(); i++) {\
 
@@ -68,6 +77,10 @@ bool FlatMemoryAllocator::allocate(size_t size, int pid)
 		else {
 			freeMemory[i].startAddress = endAddress + 1;
 		}
+
+		std::sort(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+			return a.startAddress > b.startAddress;
+		});
 
 		return true;
 	}
@@ -146,7 +159,7 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 	memCho << "----end---- = " << maximumSize << "\n\n";
 
 	for (size_t i = 0; i < numProc; i++) {
-		memCho << usedMemory[i].endAddress << "\n"
+		memCho << usedMemory[i].endAddress + 1 << "\n"
 			<< usedMemory[i].processId << "\n"
 			<< usedMemory[i].startAddress << "\n\n";
 	}

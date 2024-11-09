@@ -7,6 +7,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <algorithm>
 
 struct MemoryBlock{
 	size_t startAddress;
@@ -31,6 +32,7 @@ public:
 	void deallocate(int pid) override;
 	String visualizeProcessesInMemory() override;
 	void mergeFree();
+	bool compareByAddress(const MemoryBlock& A, const MemoryBlock& B);
 
 private:
 	size_t maximumSize;
