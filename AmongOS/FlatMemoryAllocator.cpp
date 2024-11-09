@@ -134,7 +134,6 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 	size_t externFrag = 0;
 	mergeFree();
 	for (size_t i = 0; i < freeMemory.size(); i++) {
-		memCho << i << ": " << freeMemory[i].startAddress << ", " << freeMemory[i].endAddress << ", SIZE: " << freeMemory[i].getSize() << "\n";
 		if (freeMemory[i].endAddress == maximumSize - 1) {
 			continue;
 		}
