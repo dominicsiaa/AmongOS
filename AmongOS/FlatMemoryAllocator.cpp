@@ -13,8 +13,38 @@ FlatMemoryAllocator::~FlatMemoryAllocator()
 	memory.clear();
 }
 
+void FlatMemoryAllocator::mergeFree()
+{
+	if (freeMemory.size() <= 1) {
+		return;
+	}
+
+	for (size_t i = 0; i < freeMemory.size(); i++) {\
+
+		for (size_t j = 0; j < freeMemory.size(); j++) {
+			if (j == i) {
+				continue;
+			}
+			if (freeMemory[i].endAddress + 1 == freeMemory[j].startAddress) {
+				freeMemory[i].endAddress = freeMemory[j].endAddress;
+				freeMemory.erase(freeMemory.begin() + j);
+				--i;
+				break;
+			}
+			if (freeMemory[i].startAddress == freeMemory[j].endAddress + 1) {
+				freeMemory[j].endAddress = freeMemory[i].endAddress;
+				freeMemory.erase(freeMemory.begin() + i);
+				--i;
+				break;
+			}
+		}
+	}
+}
+
 bool FlatMemoryAllocator::allocate(size_t size, int pid)
 {
+	mergeFree();
+
 	for (size_t i = 0; i < usedMemory.size(); i++) {
 		if (pid == usedMemory[i].processId) {
 			return true;
@@ -74,13 +104,7 @@ void FlatMemoryAllocator::deallocate(int pid)
 		freeMemory.push_back(deallocatedBlock);
 	}
 
-	for (size_t i = 0; i < freeMemory.size() - 1; ++i) {
-		if (freeMemory[i].endAddress + 1 == freeMemory[i + 1].startAddress) {
-			freeMemory[i].endAddress = freeMemory[i + 1].endAddress;
-			freeMemory.erase(freeMemory.begin() + i + 1);
-			--i;
-		}
-	}
+	mergeFree();
 
 	//size_t index = static_cast<char*>(ptr) - &memory[0];
 	//if(allocationMap[index])
@@ -104,8 +128,9 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 	localtime_s(&timeInfo, &timeStamp);
 
 	size_t externFrag = 0;
-
+	mergeFree();
 	for (size_t i = 0; i < freeMemory.size(); i++) {
+		memCho << i << ": " << freeMemory[i].startAddress << ", " << freeMemory[i].endAddress << ", SIZE: " << freeMemory[i].getSize() << "\n";
 		if (freeMemory[i].endAddress == maximumSize - 1) {
 			continue;
 		}

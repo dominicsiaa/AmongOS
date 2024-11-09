@@ -30,6 +30,7 @@ public:
 	bool allocate(size_t size, int pid) override;
 	void deallocate(int pid) override;
 	String visualizeProcessesInMemory() override;
+	void mergeFree();
 
 private:
 	size_t maximumSize;
