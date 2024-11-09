@@ -28,24 +28,15 @@ void FlatMemoryAllocator::mergeFree()
 		return a.startAddress < b.startAddress;
 	});
 
-	for (size_t i = 0; i < freeMemory.size(); i++) {\
-
-		for (size_t j = 0; j < freeMemory.size(); j++) {
-			if (j == i) {
-				continue;
-			}
-			if (freeMemory[i].endAddress + 1 == freeMemory[j].startAddress) {
-				freeMemory[i].endAddress = freeMemory[j].endAddress;
-				freeMemory.erase(freeMemory.begin() + j);
-				--i;
-				break;
-			}
-			if (freeMemory[i].startAddress == freeMemory[j].endAddress + 1) {
-				freeMemory[j].endAddress = freeMemory[i].endAddress;
-				freeMemory.erase(freeMemory.begin() + i);
-				--i;
-				break;
-			}
+	for (size_t i = 0; i < freeMemory.size(); i++) {
+		if (i > freeMemory.size() - 2) {
+			break;
+		}
+		if (freeMemory[i].endAddress + 1 == freeMemory[i + 1].startAddress) {
+			freeMemory[i].endAddress = freeMemory[i + 1].endAddress;
+			freeMemory.erase(freeMemory.begin() + i + 1);
+			--i;
+			break;
 		}
 	}
 }
