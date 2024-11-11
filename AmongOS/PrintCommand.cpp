@@ -19,5 +19,5 @@ void PrintCommand::execute()
 
     volatile double preventOptimization = result;
     (void)preventOptimization;*/
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
 }

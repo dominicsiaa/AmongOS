@@ -45,6 +45,7 @@ void MainConsole::onEnabled() {
 }
 
 void MainConsole::runSchedulerTest() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     static int counter = 1;
 
     if (counter == config.batch_process_freq) {
@@ -72,9 +73,9 @@ void MainConsole::runSchedulerTest() {
 void MainConsole::process() {
 
     //sleep for 1 ms
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	//std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    //std::this_thread::sleep_for(std::chrono::microseconds(1));
+    std::this_thread::sleep_for(std::chrono::microseconds(50));
 
     if (MainConsole::isSchedulerTestRunning) {
         runSchedulerTest();
