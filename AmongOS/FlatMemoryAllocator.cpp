@@ -1,5 +1,7 @@
 #include "FlatMemoryAllocator.h"
 #include <sstream>
+#include <algorithm>
+#include <iostream>
 
 FlatMemoryAllocator::FlatMemoryAllocator(size_t maximumSize)
 	: maximumSize(maximumSize)
@@ -43,41 +45,79 @@ bool FlatMemoryAllocator::allocate(size_t size, int pid)
 {
 	mergeFree();
 
+	// if pid in memory, return true
 	for (size_t i = 0; i < usedMemory.size(); i++) {
 		if (pid == usedMemory[i].processId) {
 			return true;
 		}
 	}
 
-	for (size_t i = 0; i < freeMemory.size(); i++) {
-		size_t blockSize = freeMemory[i].getSize();
-
-		if (size > blockSize) {
-			continue;
-		}
-
-		size_t startAddress = freeMemory[i].startAddress;
-		size_t endAddress = startAddress + size - 1;
-		usedMemory.push_back(MemoryBlock(startAddress, endAddress, pid));
-
-		if (blockSize == size) {
-			freeMemory.erase(freeMemory.begin() + i);
-		}
-		else {
-			freeMemory[i].startAddress = endAddress + 1;
-		}
-
-		std::sort(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
-			return a.startAddress > b.startAddress;
-		});
-
-		return true;
+	// if size is greater than memory, return false
+	if (size > maximumSize)
+	{
+		return false;
 	}
-	return false;
+
+	bool allocated = false;
+	while (!allocated) {
+		// For each free block, check if it fits
+		for (size_t i = 0; i < freeMemory.size(); i++) {
+			size_t blockSize = freeMemory[i].getSize();
+
+			// If it fits, allocate it (move it from free to used memory)
+			if (size <= blockSize) {
+				size_t startAddress = freeMemory[i].startAddress;
+				size_t endAddress = startAddress + size - 1;
+
+				usedMemory.push_back(MemoryBlock(startAddress, endAddress, pid));
+				if (blockSize == size) {
+					freeMemory.erase(freeMemory.begin() + i); 
+				}
+				else {
+					freeMemory[i].startAddress = endAddress + 1; 
+				}
+
+				// Sort the used memory for visualization
+				std::sort(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+					return a.startAddress < b.startAddress;
+				});
+
+				allocated = true; 
+				break;
+			}
+		}
+
+		// If no fit, remove oldest process and try again
+		if (!allocated) {
+			if (usedMemory.size() > 1) {
+				removeOldestBlock();
+			}
+
+			// Just in case
+			if (usedMemory.size() == 0 || freeMemory.empty()) {
+				break;
+			}
+		}
+	}
+
+	return allocated;
+}
+
+void FlatMemoryAllocator::removeOldestBlock()
+{
+	auto oldestBlockIt = std::min_element(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+		return a.allocationTime < b.allocationTime;
+	});
+
+	if (oldestBlockIt != usedMemory.end()) {
+		freeMemory.push_back(*oldestBlockIt);
+		usedMemory.erase(oldestBlockIt);
+	}
 }
 
 void FlatMemoryAllocator::deallocate(int pid)
 {
+	// for each used block, if pid matches, deallocate
 	for (size_t i = 0; i < usedMemory.size(); i++) {
 		if (pid != usedMemory[i].processId) {
 			continue;

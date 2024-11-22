@@ -1,23 +1,19 @@
 #pragma once
-#include <unordered_map>
 #include <vector>
 #include "IMemoryAllocator.h"
-#include <array>
 #include <chrono>
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-#include <algorithm>
 
-struct MemoryBlock{
+struct MemoryBlock {
 	size_t startAddress;
 	size_t endAddress;
 	int processId;
+	std::chrono::steady_clock::time_point allocationTime;  // Time of allocation
 
 	MemoryBlock(size_t start, size_t end, int pid)
-		: startAddress(start), endAddress(end), processId(pid) {}
+		: startAddress(start), endAddress(end), processId(pid),
+		allocationTime(std::chrono::steady_clock::now()) {}
 
-	size_t getSize() {
+	size_t getSize() const {
 		return endAddress - startAddress + 1;
 	}
 };
@@ -40,4 +36,5 @@ private:
 	std::vector<MemoryBlock> freeMemory;
 
 	void initializeMemory();
+	void removeOldestBlock();
 };

@@ -12,12 +12,12 @@ PrintCommand::PrintCommand(int pid, const String& toPrint) : ICommand(pid, PRINT
 
 void PrintCommand::execute()
 {
-    double result = 0;
+    /*double result = 0;
     for (int i = 1; i < 50000; ++i) {
         result += std::sin(i) * std::cos(i) / (i + 1);
     }
 
     volatile double preventOptimization = result;
-    (void)preventOptimization;
-    //std::this_thread::sleep_for(std::chrono::microseconds(10));
+    (void)preventOptimization;*/
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
 }
