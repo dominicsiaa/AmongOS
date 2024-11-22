@@ -244,6 +244,9 @@ String GlobalScheduler::callProcessSmi()
 
     output += "process-smi...\n\n";
 
+    //TODO: implement process-smi properly, this is temp lang
+    output += memoryAllocator->visualizeProcessesInMemory();
+
     return output;
 }
 

@@ -73,13 +73,9 @@ void MainConsole::runSchedulerTest() {
 }
 
 void MainConsole::process() {
+    //std::this_thread::sleep_for(std::chrono::microseconds(50));
 
-    //sleep for 1 ms
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	//std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    std::this_thread::sleep_for(std::chrono::microseconds(50));
-
-    if (MainConsole::isSchedulerTestRunning) {
+    if (isSchedulerTestRunning) {
         runSchedulerTest();
     }
 
@@ -175,10 +171,10 @@ void MainConsole::process() {
         appendToDisplayHistory("\033[1;33m-s <name> : Create a new process with the specified name");
     }
     else if (command == "scheduler-test") {
-        if (!MainConsole::isSchedulerTestRunning) {
+        if (!isSchedulerTestRunning) {
             std::cout << "\033[1;32mStarting scheduler test...\n";
             appendToDisplayHistory("\033[1;32mStarting scheduler test...");
-            MainConsole::isSchedulerTestRunning = true;
+            isSchedulerTestRunning = true;
         }
         else {
             std::cout << "\033[1;31mScheduler test is already running!\n";
@@ -187,10 +183,10 @@ void MainConsole::process() {
 
     }
     else if (command == "scheduler-stop") {
-        if (MainConsole::isSchedulerTestRunning) {
+        if (isSchedulerTestRunning) {
             std::cout << "\033[1;32mStopping scheduler test...\n";
             appendToDisplayHistory("\033[1;32mStopping scheduler test...");
-            MainConsole::isSchedulerTestRunning = false;
+            isSchedulerTestRunning = false;
 
             //DEBUG: display number of processes created
             //std::cout << "Number of processes created: " << processCounter << std::endl;

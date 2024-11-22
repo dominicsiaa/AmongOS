@@ -26,17 +26,16 @@ class FlatMemoryAllocator : public IMemoryAllocator
 {
 public:
 	FlatMemoryAllocator(size_t maximumSize);
-	~FlatMemoryAllocator();
+	~FlatMemoryAllocator() override;
 
 	bool allocate(size_t size, int pid) override;
 	void deallocate(int pid) override;
+	String visualizeProcessesInMemory() override;
 
 	void mergeFree();
 
 private:
 	size_t maximumSize;
-	size_t allocatedSize;
-	size_t numFreeBlocks;
 	std::vector<char> memory;
 	std::unordered_map<size_t, bool> allocationMap;
 	std::vector<MemoryBlock> usedMemory;

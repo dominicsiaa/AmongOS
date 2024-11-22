@@ -2,7 +2,7 @@
 #include <sstream>
 
 FlatMemoryAllocator::FlatMemoryAllocator(size_t maximumSize)
-	: maximumSize(maximumSize), allocatedSize(0)
+	: maximumSize(maximumSize)
 {
 	memory.reserve(maximumSize);
 	initializeMemory();
@@ -93,45 +93,42 @@ void FlatMemoryAllocator::deallocate(int pid)
 	mergeFree();
 }
 
-/*
- *	OLD CODE FROM HW NO LONGER NEEDED IN MP
- */
-//String FlatMemoryAllocator::visualizeProcessesInMemory()
-//{
-//	std::ostringstream memCho;
-//
-//	auto now = std::chrono::system_clock::now();
-//	std::time_t timeStamp = std::chrono::system_clock::to_time_t(now);
-//
-//	std::tm timeInfo;
-//	localtime_s(&timeInfo, &timeStamp);
-//
-//	size_t externFrag = 0;
-//	mergeFree();
-//	for (size_t i = 0; i < freeMemory.size(); i++) {
-//		if (freeMemory[i].endAddress == maximumSize - 1) {
-//			continue;
-//		}
-//		externFrag += freeMemory[i].getSize();
-//	}
-//
-//	int numProc = usedMemory.size();
-//
-//	memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
-//	memCho << "Number of processes in memory: " << numProc << "\n";
-//	memCho << "Total external fragmentation in KB: " << externFrag << "\n\n";
-//
-//	memCho << "----end---- = " << maximumSize << "\n\n";
-//
-//	for (size_t i = 0; i < numProc; i++) {
-//		memCho << usedMemory[i].endAddress + 1 << "\n"
-//			"P" << usedMemory[i].processId << "\n"
-//			<< usedMemory[i].startAddress << "\n\n";
-//	}
-//
-//	memCho << "----start---- = 0\n";
-//	return memCho.str();
-//}
+String FlatMemoryAllocator::visualizeProcessesInMemory()
+{
+	std::ostringstream memCho;
+
+	auto now = std::chrono::system_clock::now();
+	std::time_t timeStamp = std::chrono::system_clock::to_time_t(now);
+
+	std::tm timeInfo;
+	localtime_s(&timeInfo, &timeStamp);
+
+	size_t externFrag = 0;
+	mergeFree();
+	for (size_t i = 0; i < freeMemory.size(); i++) {
+		if (freeMemory[i].endAddress == maximumSize - 1) {
+			continue;
+		}
+		externFrag += freeMemory[i].getSize();
+	}
+
+	int numProc = usedMemory.size();
+
+	memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
+	memCho << "Number of processes in memory: " << numProc << "\n";
+	memCho << "Total external fragmentation in KB: " << externFrag << "\n\n";
+
+	memCho << "----end---- = " << maximumSize << "\n\n";
+
+	for (size_t i = 0; i < numProc; i++) {
+		memCho << usedMemory[i].endAddress + 1 << "\n"
+			"P" << usedMemory[i].processId << "\n"
+			<< usedMemory[i].startAddress << "\n\n";
+	}
+
+	memCho << "----start---- = 0\n";
+	return memCho.str();
+}
 
 void FlatMemoryAllocator::initializeMemory()
 {
