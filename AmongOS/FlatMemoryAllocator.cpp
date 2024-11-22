@@ -4,13 +4,11 @@
 FlatMemoryAllocator::FlatMemoryAllocator(size_t maximumSize)
 	: maximumSize(maximumSize)
 {
-	memory.reserve(maximumSize);
 	initializeMemory();
 }
 
 FlatMemoryAllocator::~FlatMemoryAllocator()
 {
-	memory.clear();
 }
 
 bool compareByAddress(const MemoryBlock& a, const MemoryBlock& b) {

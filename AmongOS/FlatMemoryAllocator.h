@@ -36,8 +36,6 @@ public:
 
 private:
 	size_t maximumSize;
-	std::vector<char> memory;
-	std::unordered_map<size_t, bool> allocationMap;
 	std::vector<MemoryBlock> usedMemory;
 	std::vector<MemoryBlock> freeMemory;
 
