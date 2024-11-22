@@ -50,7 +50,8 @@ private:
         unsigned int delay_per_exec = 0;
         size_t max_overall_mem = 16384;
         size_t mem_per_frame = 16;
-        size_t mem_per_proc = 4096;
+        size_t min_mem_per_proc = 4096;
+        size_t max_mem_per_proc = 4096;
 
     } config;
 };

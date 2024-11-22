@@ -1,8 +1,9 @@
 #include "ConsoleManager.h"
 
-
 int main()
 {
+	std::srand(std::time(nullptr));
+
 	ConsoleManager::initialize();
 
 	bool running = true;

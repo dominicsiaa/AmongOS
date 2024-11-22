@@ -136,7 +136,8 @@ void GlobalScheduler::doRR() {
     }
 
     counter++;
-    if (counter == quantumTime) {
+    // Homework code not included in mp
+    /*if (counter == quantumTime) {
         counter = 0;
         this->quantumCounter++;
 
@@ -156,7 +157,7 @@ void GlobalScheduler::doRR() {
         else {
             std::cerr << "Error opening file: " << filename << std::endl;
         }
-    }
+    }*/
 }
 
 void GlobalScheduler::destroy()

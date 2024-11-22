@@ -48,6 +48,6 @@ class ConsoleManager
 			std::shared_ptr<AConsole> currentConsole;
 			std::shared_ptr<AConsole> previousConsole;
 
-			HANDLE consoleHandle;
+			HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 			bool running = true;
 };

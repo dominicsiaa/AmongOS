@@ -6,6 +6,7 @@
 #include <sstream>
 #include <chrono>
 #include <ctime>
+#include <cstdlib>
 
 MainConsole::MainConsole() : AConsole("MainConsole") {
     this->isInitialized = false;
@@ -57,12 +58,13 @@ void MainConsole::runSchedulerTest() {
     }
 
     std::stringstream timeStamp = createCurrentTimestamp();
+
     Process::RequirementFlags flags;
     flags.requireFiles = false;
     flags.numFiles = 0;
-    flags.memoryRequired = config.mem_per_proc;
+    flags.memoryRequired = config.min_mem_per_proc +
+        (std::rand() % (config.max_mem_per_proc - config.min_mem_per_proc + 1));
     flags.requireMemory = true;
-
 
     auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
     process->generateDummyCommands(config.min_ins, config.max_ins);
@@ -137,7 +139,8 @@ void MainConsole::process() {
                 this->config.delay_per_exec = std::stoul(configMap["delay-per-exec"]);
                 this->config.max_overall_mem = std::stoul(configMap["max-overall-mem"]);
                 this->config.mem_per_frame = std::stoul(configMap["mem-per-frame"]);
-                this->config.mem_per_proc = std::stoul(configMap["mem-per-proc"]);
+                this->config.min_mem_per_proc = std::stoul(configMap["min-mem-per-proc"]);
+				this->config.max_mem_per_proc = std::stoul(configMap["max-mem-per-proc"]);
 
                 GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec, this->config.max_overall_mem);
                 this->isInitialized = true;
@@ -231,11 +234,14 @@ void MainConsole::process() {
             appendToDisplayHistory("Process with this name already exists!");
         } else {
             std::stringstream timeStamp = createCurrentTimestamp();
+
             Process::RequirementFlags flags;
             flags.requireFiles = false;
             flags.numFiles = 0;
             flags.requireMemory = true;
-            flags.memoryRequired = config.mem_per_proc;
+            flags.memoryRequired = config.min_mem_per_proc +
+                (std::rand() % (config.max_mem_per_proc - config.min_mem_per_proc + 1));
+            std::cout<< "Memory required: " << flags.memoryRequired << std::endl;
 
             auto process = std::make_shared<Process>(processCounter, processName, flags);
             processCounter++;

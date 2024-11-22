@@ -27,5 +27,5 @@ private:
     int timeElapsed = 0;
     int tickCounter = 0;
     std::shared_ptr<Process> currProcess;
-    unsigned int delayPerExec;
+    unsigned int delayPerExec = 0;
 };
