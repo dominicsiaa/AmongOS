@@ -180,7 +180,7 @@ void GlobalScheduler::addBackToRQ(std::shared_ptr<Process> process) {
     readyQueue.push_back(process);
 }
 
-std::string GlobalScheduler::callScreenLS() {
+String GlobalScheduler::callScreenLS() {
     std::ostringstream displayStream;
 
     int totalCores = this->core.size();
@@ -238,8 +238,23 @@ std::string GlobalScheduler::callScreenLS() {
     return displayStream.str();
 }
 
+String GlobalScheduler::callProcessSmi()
+{
+    String output = "";
 
+    output += "process-smi...\n\n";
 
+    return output;
+}
+
+String GlobalScheduler::callVmStat()
+{
+    String output = "";
+
+    output += "vmstat...\n\n";
+
+	return output;
+}
 
 std::shared_ptr<Process> GlobalScheduler::findProcess(String name) {
 	for (auto process : readyQueue) {

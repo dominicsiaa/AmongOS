@@ -47,6 +47,8 @@ public:
 	void addBackToRQ(std::shared_ptr<Process> process);
 
 	String callScreenLS();
+	String callProcessSmi();
+	String callVmStat();
 
 	std::shared_ptr<Process> findProcess(String name);
 

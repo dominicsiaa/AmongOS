@@ -241,7 +241,6 @@ void MainConsole::process() {
             flags.requireMemory = true;
             flags.memoryRequired = config.min_mem_per_proc +
                 (std::rand() % (config.max_mem_per_proc - config.min_mem_per_proc + 1));
-            std::cout<< "Memory required: " << flags.memoryRequired << std::endl;
 
             auto process = std::make_shared<Process>(processCounter, processName, flags);
             processCounter++;
@@ -281,6 +280,17 @@ void MainConsole::process() {
         std::cout << screenLsOutput;
         appendToDisplayHistory(screenLsOutput);
 
+    } else if (command == "process-smi")
+    {
+    	String smiOutput = GlobalScheduler::getInstance()->callProcessSmi();
+		std::cout << smiOutput;
+		appendToDisplayHistory(smiOutput);
+    }
+    else if (command == "vmstat")
+    {
+		String vmstatOutput = GlobalScheduler::getInstance()->callVmStat();
+        std::cout << vmstatOutput;
+        appendToDisplayHistory(vmstatOutput);
     }
     else {
         std::cout << "\033[1;31m" << "Error: command not recognized. Please try again\n";

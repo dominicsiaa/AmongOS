@@ -30,9 +30,8 @@ public:
 
 	bool allocate(size_t size, int pid) override;
 	void deallocate(int pid) override;
-	String visualizeProcessesInMemory() override;
+
 	void mergeFree();
-	bool compareByAddress(const MemoryBlock& A, const MemoryBlock& B);
 
 private:
 	size_t maximumSize;

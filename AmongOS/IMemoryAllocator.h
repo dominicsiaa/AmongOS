@@ -9,5 +9,4 @@ public:
 
 	virtual bool allocate(size_t size, int pid) = 0;
 	virtual void deallocate(int pid) = 0;
-	virtual String visualizeProcessesInMemory() = 0;
 };
