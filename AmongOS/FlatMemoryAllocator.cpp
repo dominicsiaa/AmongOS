@@ -58,6 +58,8 @@ bool FlatMemoryAllocator::allocate(size_t size, int pid)
 		return false;
 	}
 
+	//TODO: if process is memory allocated, meaning its in backing store, handle differently?
+
 	bool allocated = false;
 	while (!allocated) {
 		// For each free block, check if it fits
@@ -112,6 +114,7 @@ void FlatMemoryAllocator::removeOldestBlock()
 	if (oldestBlockIt != usedMemory.end()) {
 		freeMemory.push_back(*oldestBlockIt);
 		usedMemory.erase(oldestBlockIt);
+		//TODO: Add to backing store
 	}
 }
 
