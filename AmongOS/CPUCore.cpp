@@ -18,9 +18,9 @@ void CPUCore::addTask(const std::shared_ptr<Process>& process) {
 }
 
 void CPUCore::processTask() {
-	if (!currProcess) {
-		return;
-	}
+    if (!currProcess) {
+        return;
+    }
 
     if (currProcess->isFinished()) {
         return;

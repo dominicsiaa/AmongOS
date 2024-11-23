@@ -5,6 +5,8 @@
 #include <fstream>
 #include <filesystem>
 
+#include "GlobalScheduler.h"
+
 FlatMemoryAllocator::FlatMemoryAllocator(size_t maximumSize)
 	: maximumSize(maximumSize)
 {
@@ -65,7 +67,7 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 		return false;
 	}
 
-	// allocate logic
+	//allocate logic
 	bool allocated = false;
 	while (!allocated) {
 		for (auto it = freeMemory.begin(); it != freeMemory.end(); ++it) {
@@ -97,7 +99,10 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 		// if process cannot be allocated, remove oldest block and try again
 		if (!allocated) {
 			if (usedMemory.size() >= 1) {
-				removeOldestBlock();
+				if(!removeOldestBlock())
+				{
+					return false;
+				}
 			}
 
 			if (usedMemory.empty() || freeMemory.empty()) {
@@ -105,29 +110,32 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 			}
 		}
 	}
-	return allocated;
 }
 
-void FlatMemoryAllocator::removeOldestBlock()
+bool FlatMemoryAllocator::removeOldestBlock()
 {
-	// find oldest block
 	auto oldestBlockIt = std::min_element(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
 		return a.allocationTime < b.allocationTime;
-		});
+	});
 
-	if (oldestBlockIt != usedMemory.end()) {
-		String content = std::to_string(oldestBlockIt->processId) + ", " +
-			oldestBlockIt->processName + ", " +
-			std::to_string(oldestBlockIt->getSize()) + "KB\n";
+	while (oldestBlockIt != usedMemory.end()) {
+		if (!GlobalScheduler::getInstance()->isProcessRunning(oldestBlockIt->processName)) {
+			String content = std::to_string(oldestBlockIt->processId) + ", " +
+				oldestBlockIt->processName + ", " +
+				std::to_string(oldestBlockIt->getSize()) + "KB\n";
 
-		// remove oldest block
-		freeMemory.push_back(*oldestBlockIt);
-		usedMemory.erase(oldestBlockIt);
-		mergeFree();
+			freeMemory.push_back(*oldestBlockIt);
+			usedMemory.erase(oldestBlockIt);
+			mergeFree();
 
-		// write block to backing store
-		writeToBackingStore(content);
+			writeToBackingStore(content);
+
+			return true;
+		}
+		oldestBlockIt = std::next(oldestBlockIt);
 	}
+
+	return false;
 }
 
 void FlatMemoryAllocator::writeToBackingStore(String content)

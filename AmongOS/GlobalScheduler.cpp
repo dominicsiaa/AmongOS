@@ -277,3 +277,12 @@ std::shared_ptr<Process> GlobalScheduler::findProcess(String name) {
 	}
 	return nullptr;
 }
+
+bool GlobalScheduler::isProcessRunning(String name) {
+    for (auto process : ongoingProcesses) {
+        if (process->getName() == name) {
+			return true;
+		}
+	}
+	return false;
+}

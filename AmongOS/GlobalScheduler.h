@@ -51,6 +51,7 @@ public:
 	String callVmStat();
 
 	std::shared_ptr<Process> findProcess(String name);
+	bool isProcessRunning(String name);
 
 	void tick() override;
 	void run() override;

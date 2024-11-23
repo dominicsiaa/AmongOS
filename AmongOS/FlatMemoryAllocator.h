@@ -37,7 +37,7 @@ private:
 	std::list<MemoryBlock> freeMemory;
 
 	void initializeMemory();
-	void removeOldestBlock();
+	bool removeOldestBlock();
 	void writeToBackingStore(String content);
 	void removeFromBackingStore(int pid);
 };
