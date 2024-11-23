@@ -2,11 +2,20 @@
 #include <sstream>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 
 FlatMemoryAllocator::FlatMemoryAllocator(size_t maximumSize)
 	: maximumSize(maximumSize)
 {
 	initializeMemory();
+
+	std::string directory = "memory_files";
+	std::filesystem::create_directory(directory);
+
+	std::string filePath = directory + "/backing_store.txt";
+	std::ofstream backingStore(filePath, std::ios::out | std::ios::trunc);
+	backingStore.close();
 }
 
 FlatMemoryAllocator::~FlatMemoryAllocator()
