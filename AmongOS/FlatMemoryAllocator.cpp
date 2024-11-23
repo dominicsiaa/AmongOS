@@ -22,90 +22,85 @@ FlatMemoryAllocator::~FlatMemoryAllocator()
 {
 }
 
-bool compareByAddress(const MemoryBlock& a, const MemoryBlock& b) {
-	return a.startAddress < b.startAddress;
-}
-
-
 void FlatMemoryAllocator::mergeFree()
 {
 	if (freeMemory.size() <= 1) {
 		return;
 	}
 
-	std::sort(freeMemory.begin(), freeMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+	freeMemory.sort([](const MemoryBlock& a, const MemoryBlock& b) {
 		return a.startAddress < b.startAddress;
-	});
+		});
 
-	for (size_t i = 0; i < freeMemory.size(); i++) {
-		if (i > freeMemory.size() - 2) {
-			break;
+	auto it = freeMemory.begin();
+	while (it != freeMemory.end()) {
+		auto next = std::next(it);
+		if (next != freeMemory.end() && it->endAddress + 1 == next->startAddress) {
+			it->endAddress = next->endAddress;
+			freeMemory.erase(next);
 		}
-		if (freeMemory[i].endAddress + 1 == freeMemory[i + 1].startAddress) {
-			freeMemory[i].endAddress = freeMemory[i + 1].endAddress;
-			freeMemory.erase(freeMemory.begin() + i + 1);
-			--i;
-			break;
+		else {
+			++it;
 		}
 	}
 }
 
-bool FlatMemoryAllocator::allocate(size_t size, int pid)
+bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 {
 	mergeFree();
 
-	// if pid in memory, return true
-	for (size_t i = 0; i < usedMemory.size(); i++) {
-		if (pid == usedMemory[i].processId) {
+	size_t size = p->getSize();
+	int pid = p->getPID();
+	String processName = p->getName();
+
+	// if process is already in memory, return true
+	for (const auto& block : usedMemory) {
+		if (block.processId == pid) {
 			return true;
 		}
 	}
 
-	// if size is greater than memory, return false
-	if (size > maximumSize)
-	{
+	// if process is too big for memory, return false
+	if (size > maximumSize) {
 		return false;
 	}
 
-	//TODO: if process is memory allocated, meaning its in backing store, handle differently?
-
+	// allocate logic
 	bool allocated = false;
 	while (!allocated) {
-		// For each free block, check if it fits
-		for (size_t i = 0; i < freeMemory.size(); i++) {
-			size_t blockSize = freeMemory[i].getSize();
+		for (auto it = freeMemory.begin(); it != freeMemory.end(); ++it) {
+			size_t blockSize = it->getSize();
 
-			// If it fits, allocate it (move it from free to used memory)
+			// if block is big enough for process, allocate
 			if (size <= blockSize) {
-				size_t startAddress = freeMemory[i].startAddress;
+				size_t startAddress = it->startAddress;
 				size_t endAddress = startAddress + size - 1;
 
-				usedMemory.push_back(MemoryBlock(startAddress, endAddress, pid));
+				usedMemory.emplace_back(startAddress, endAddress, pid, processName);
 				if (blockSize == size) {
-					freeMemory.erase(freeMemory.begin() + i); 
+					freeMemory.erase(it);
 				}
 				else {
-					freeMemory[i].startAddress = endAddress + 1; 
+					it->startAddress = endAddress + 1;
 				}
 
-				// Sort the used memory for visualization
-				std::sort(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+				usedMemory.sort([](const MemoryBlock& a, const MemoryBlock& b) {
 					return a.startAddress < b.startAddress;
 				});
 
-				allocated = true; 
+				removeFromBackingStore(pid);
+				allocated = true;
 				break;
 			}
 		}
 
-		// If no fit, remove oldest process and try again
+		// if process cannot be allocated, remove oldest block and try again
 		if (!allocated) {
 			if (usedMemory.size() > 1) {
 				removeOldestBlock();
 			}
 
-			// Just in case
-			if (usedMemory.size() == 0 || freeMemory.empty()) {
+			if (usedMemory.empty() || freeMemory.empty()) {
 				break;
 			}
 		}
@@ -116,29 +111,91 @@ bool FlatMemoryAllocator::allocate(size_t size, int pid)
 
 void FlatMemoryAllocator::removeOldestBlock()
 {
+	// find oldest block
 	auto oldestBlockIt = std::min_element(usedMemory.begin(), usedMemory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
 		return a.allocationTime < b.allocationTime;
-	});
+		});
 
 	if (oldestBlockIt != usedMemory.end()) {
+		String content = std::to_string(oldestBlockIt->processId) + ", " +
+			oldestBlockIt->processName + ", " +
+			std::to_string(oldestBlockIt->getSize()) + "KB\n";
+
+		// remove oldest block
 		freeMemory.push_back(*oldestBlockIt);
 		usedMemory.erase(oldestBlockIt);
-		//TODO: Add to backing store
+
+		// write block to backing store
+		writeToBackingStore(content);
 	}
+}
+
+void FlatMemoryAllocator::writeToBackingStore(String content)
+{
+	String directory = "memory_files";
+	String filePath = directory + "/backing_store.txt";
+	std::fstream backingStore(filePath, std::ios::in | std::ios::out);
+
+	String line;
+	bool written = false;
+
+	// Find first empty line and write there
+	while (std::getline(backingStore, line)) {
+		if (line.empty()) {
+			auto pos = backingStore.tellg();
+			backingStore.seekp(pos - std::streamoff(line.size() + 1));
+			backingStore << content;
+			written = true;
+			break;
+		}
+	}
+
+	// If no empty line, write to end
+	if (!written) {
+		backingStore.clear();
+		backingStore.seekp(0, std::ios::end);
+		backingStore << content;
+	}
+
+	backingStore.close();
+}
+
+void FlatMemoryAllocator::removeFromBackingStore(int pid)
+{
+	String directory = "memory_files";
+	String filePath = directory + "/backing_store.txt";
+	std::fstream backingStore(filePath, std::ios::in | std::ios::out);
+
+	std::stringstream buffer;
+	String line;
+
+	while (std::getline(backingStore, line)) {
+		if (line.substr(0, line.find(',')) != std::to_string(pid)) {
+			buffer << line << "\n"; 
+		}
+	}
+
+	backingStore.close();
+
+	backingStore.open(filePath, std::ios::out | std::ios::trunc);
+	backingStore << buffer.str();
+	backingStore.close();
 }
 
 void FlatMemoryAllocator::deallocate(int pid)
 {
-	// for each used block, if pid matches, deallocate
-	for (size_t i = 0; i < usedMemory.size(); i++) {
-		if (pid != usedMemory[i].processId) {
-			continue;
+	auto it = usedMemory.begin();
+	while (it != usedMemory.end()) {
+		if (it->processId == pid) {
+			freeMemory.push_back(*it);
+			it = usedMemory.erase(it);
 		}
-
-		MemoryBlock deallocatedBlock = usedMemory[i];
-		usedMemory.erase(usedMemory.begin() + i);
-		freeMemory.push_back(deallocatedBlock);
+		else {
+			++it;
+		}
 	}
+
+	removeFromBackingStore(pid);
 
 	mergeFree();
 }
@@ -155,14 +212,15 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 
 	size_t externFrag = 0;
 	mergeFree();
-	for (size_t i = 0; i < freeMemory.size(); i++) {
-		if (freeMemory[i].endAddress == maximumSize - 1) {
+
+	for (const auto& block : freeMemory) {
+		if (block.endAddress == maximumSize - 1) {
 			continue;
 		}
-		externFrag += freeMemory[i].getSize();
+		externFrag += block.getSize();
 	}
 
-	int numProc = usedMemory.size();
+	int numProc = static_cast<int>(usedMemory.size());
 
 	memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
 	memCho << "Number of processes in memory: " << numProc << "\n";
@@ -170,10 +228,10 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 
 	memCho << "----end---- = " << maximumSize << "\n\n";
 
-	for (size_t i = 0; i < numProc; i++) {
-		memCho << usedMemory[i].endAddress + 1 << "\n"
-			"P" << usedMemory[i].processId << "\n"
-			<< usedMemory[i].startAddress << "\n\n";
+	for (const auto& block : usedMemory) {
+		memCho << block.endAddress + 1 << "\n"
+			<< "P" << block.processId << ", " << block.processName << "\n"
+			<< block.startAddress << "\n\n";
 	}
 
 	memCho << "----start---- = 0\n";
@@ -182,5 +240,5 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 
 void FlatMemoryAllocator::initializeMemory()
 {
-	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1));
+	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1, ""));
 }

@@ -1,16 +1,17 @@
 #pragma once
-#include <vector>
 #include "IMemoryAllocator.h"
 #include <chrono>
+#include <list>
 
 struct MemoryBlock {
 	size_t startAddress;
 	size_t endAddress;
 	int processId;
-	std::chrono::steady_clock::time_point allocationTime;  // Time of allocation
+	String processName;
+	std::chrono::steady_clock::time_point allocationTime;
 
-	MemoryBlock(size_t start, size_t end, int pid)
-		: startAddress(start), endAddress(end), processId(pid),
+	MemoryBlock(size_t start, size_t end, int pid, String processName)
+		: startAddress(start), endAddress(end), processId(pid), processName(processName),
 		allocationTime(std::chrono::steady_clock::now()) {}
 
 	size_t getSize() const {
@@ -24,7 +25,7 @@ public:
 	FlatMemoryAllocator(size_t maximumSize);
 	~FlatMemoryAllocator() override;
 
-	bool allocate(size_t size, int pid) override;
+	bool allocate(std::shared_ptr<Process> p) override;
 	void deallocate(int pid) override;
 	String visualizeProcessesInMemory() override;
 
@@ -32,9 +33,11 @@ public:
 
 private:
 	size_t maximumSize;
-	std::vector<MemoryBlock> usedMemory;
-	std::vector<MemoryBlock> freeMemory;
+	std::list<MemoryBlock> usedMemory; 
+	std::list<MemoryBlock> freeMemory;
 
 	void initializeMemory();
 	void removeOldestBlock();
+	void writeToBackingStore(String content);
+	void removeFromBackingStore(int pid);
 };

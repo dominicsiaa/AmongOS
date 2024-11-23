@@ -51,9 +51,6 @@ public:
     void setCPUCoreId(int coreId);
     void setState(ProcessState state);
 
-	void allocateMemory();
-    bool isMemoryAllocated() const;
-
 private:
     int pid;
     String name;
@@ -65,8 +62,4 @@ private:
     RequirementFlags requirementFlags;
     ProcessState currentState;
     std::chrono::time_point<std::chrono::system_clock> startTime;
-
-    bool memoryAllocated = false;
-
-    //friend class ResourceEmulator;
 };

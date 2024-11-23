@@ -131,13 +131,3 @@ void Process::setStartTime() {
 std::chrono::time_point<std::chrono::system_clock> Process::getStartTime() const{
 	return startTime;
 }
-
-void Process::allocateMemory()
-{
-	this->memoryAllocated = true;
-}
-
-bool Process::isMemoryAllocated() const
-{
-	return memoryAllocated;
-}

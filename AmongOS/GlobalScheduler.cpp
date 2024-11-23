@@ -121,7 +121,7 @@ void GlobalScheduler::doRR() {
         if (!core[i]->hasTasks()) {
             std::shared_ptr<Process> process = readyQueue.front();
 
-            if (!memoryAllocator->allocate(process->getSize(), process->getPID())) {
+            if (!memoryAllocator->allocate(process)) {
                 readyQueue.pop_front();
                 readyQueue.push_back(process);
                 break;
