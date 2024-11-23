@@ -96,16 +96,15 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 
 		// if process cannot be allocated, remove oldest block and try again
 		if (!allocated) {
-			if (usedMemory.size() > 1) {
+			if (usedMemory.size() >= 1) {
 				removeOldestBlock();
 			}
 
 			if (usedMemory.empty() || freeMemory.empty()) {
-				break;
+				return false;
 			}
 		}
 	}
-
 	return allocated;
 }
 
@@ -124,6 +123,7 @@ void FlatMemoryAllocator::removeOldestBlock()
 		// remove oldest block
 		freeMemory.push_back(*oldestBlockIt);
 		usedMemory.erase(oldestBlockIt);
+		mergeFree();
 
 		// write block to backing store
 		writeToBackingStore(content);
