@@ -268,9 +268,9 @@ String GlobalScheduler::callVmStat()
     output << std::right << std::setw(width) << totalMemory << " KB total memory\n";
     output << std::right << std::setw(width) << usedMemorySize << " KB used memory\n";
     output << std::right << std::setw(width) << freeMemorySize << " KB free memory\n";
-    output << std::right << std::setw(width) << idleCpuTicks << "    idle CPU ticks\n";
-    output << std::right << std::setw(width) << activeCpuTicks << "    active CPU ticks\n";
-    output << std::right << std::setw(width) << totalCpuTicks << "    total CPU ticks\n";
+    output << std::right << std::setw(width) << idleCpuTicks << " idle CPU ticks\n";
+    output << std::right << std::setw(width) << activeCpuTicks << " active CPU ticks\n";
+    output << std::right << std::setw(width) << totalCpuTicks << " total CPU ticks\n";
 	output << "\n" << std::endl;
     return output.str();
 }
