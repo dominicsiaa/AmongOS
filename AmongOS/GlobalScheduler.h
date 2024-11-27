@@ -55,6 +55,7 @@ public:
 
 	void tick() override;
 	void run() override;
+	float getCPUUtilization();
 };
 
 #endif // GlobalScheduler_H

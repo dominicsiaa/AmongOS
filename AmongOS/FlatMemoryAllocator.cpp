@@ -209,41 +209,76 @@ void FlatMemoryAllocator::deallocate(int pid)
 }
 
 String FlatMemoryAllocator::visualizeProcessesInMemory()
-{
-	std::ostringstream memCho;
+{	//old code to be removed
 
-	auto now = std::chrono::system_clock::now();
-	std::time_t timeStamp = std::chrono::system_clock::to_time_t(now);
+	//std::ostringstream memCho;
 
-	std::tm timeInfo;
-	localtime_s(&timeInfo, &timeStamp);
+	//auto now = std::chrono::system_clock::now();
+	//std::time_t timeStamp = std::chrono::system_clock::to_time_t(now);
 
-	size_t externFrag = 0;
-	mergeFree();
+	//std::tm timeInfo;
+	//localtime_s(&timeInfo, &timeStamp);
 
-	for (const auto& block : freeMemory) {
-		if (block.endAddress == maximumSize - 1) {
-			continue;
-		}
-		externFrag += block.getSize();
-	}
+	//size_t externFrag = 0;
+	//mergeFree();
 
-	int numProc = static_cast<int>(usedMemory.size());
+	//for (const auto& block : freeMemory) {
+	//	if (block.endAddress == maximumSize - 1) {
+	//		continue;
+	//	}
+	//	externFrag += block.getSize();
+	//}
 
-	memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
-	memCho << "Number of processes in memory: " << numProc << "\n";
-	memCho << "Total external fragmentation in KB: " << externFrag << "\n\n";
+	//int numProc = static_cast<int>(usedMemory.size());
 
-	memCho << "----end---- = " << maximumSize << "\n\n";
+	//memCho << "Timestamp: " << std::put_time(&timeInfo, "(%m/%d/%Y %I:%M:%S%p)") << "\n";
+	//memCho << "Number of processes in memory: " << numProc << "\n";
+	//memCho << "Total external fragmentation in KB: " << externFrag << "\n\n";
 
+	//memCho << "----end---- = " << maximumSize << "\n\n";
+
+	//for (const auto& block : usedMemory) {
+	//	memCho << block.endAddress + 1 << "\n"
+	//		<< "P" << block.processId << ", " << block.processName << "\n"
+	//		<< block.startAddress << "\n\n";
+	//}
+
+	//memCho << "----start---- = 0\n";
+	//return memCho.str();
+
+	size_t usedMemorySize = 0;
+	size_t freeMemorySize = 0;
+
+	// Calculate total used memory
 	for (const auto& block : usedMemory) {
-		memCho << block.endAddress + 1 << "\n"
-			<< "P" << block.processId << ", " << block.processName << "\n"
-			<< block.startAddress << "\n\n";
+		usedMemorySize += block.getSize();
 	}
 
-	memCho << "----start---- = 0\n";
-	return memCho.str();
+	// Calculate total free memory
+	for (const auto& block : freeMemory) {
+		freeMemorySize += block.getSize();
+	}
+	size_t totalMemory = maximumSize;
+	float memoryUtilization = (static_cast<float>(usedMemorySize) / totalMemory) * 100;
+	std::ostringstream visualizedMemory;
+
+	visualizedMemory << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	visualizedMemory << "| PROCESS-SMI V01.00 Driver Version: 01.00 |" << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	visualizedMemory << "CPU utilization: " << GlobalScheduler::getInstance()->getCPUUtilization() << "%" << "\n";
+	visualizedMemory << "Memory Usage: "<< usedMemorySize << "KB / " << totalMemory << "KB\n";
+	visualizedMemory << "Memory Utilization: " << std::fixed << std::setprecision(0) << memoryUtilization << "%\n";
+	visualizedMemory << "\n";
+	visualizedMemory << "============================================" << "\n";
+	visualizedMemory << "Running Processes and memory usage: " << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	for (const auto& block : usedMemory) {
+		visualizedMemory << block.processName << "  ";
+		visualizedMemory << block.getSize() << "KB\n";
+	}
+	visualizedMemory << "--------------------------------------------" << "\n";
+	return visualizedMemory.str();
 }
 
 void FlatMemoryAllocator::initializeMemory()

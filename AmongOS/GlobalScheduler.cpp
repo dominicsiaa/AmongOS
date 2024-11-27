@@ -242,10 +242,8 @@ String GlobalScheduler::callProcessSmi()
 {
     String output = "";
 
-    output += "process-smi...\n\n";
-
     //TODO: implement process-smi properly, this is temp lang
-    output += memoryAllocator->visualizeProcessesInMemory();
+    output = memoryAllocator->visualizeProcessesInMemory();
 
     return output;
 }
@@ -285,4 +283,19 @@ bool GlobalScheduler::isProcessRunning(String name) {
 		}
 	}
 	return false;
+}
+
+float GlobalScheduler::getCPUUtilization() {
+    int totalCores = this->core.size();
+    int usedCores = 0;
+
+
+    for (auto core : this->core) {
+        if (core->hasTasks()) {
+            usedCores++;
+        }
+    }
+
+	return (static_cast<float>(usedCores) / totalCores) * 100;
+
 }
