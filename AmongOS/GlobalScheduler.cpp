@@ -250,11 +250,29 @@ String GlobalScheduler::callProcessSmi()
 
 String GlobalScheduler::callVmStat()
 {
-    String output = "";
+    std::ostringstream output;
+    size_t totalMemory = memoryAllocator->getUsedMemorySize();
+    size_t usedMemorySize = memoryAllocator->getUsedMemorySize();
+    size_t freeMemorySize = totalMemory - usedMemorySize;
 
-    output += "vmstat...\n\n";
+    int totalCpuTicks = 0;
+    int activeCpuTicks = 0;
+    int idleCpuTicks = 0;
 
-	return output;
+    for (const auto& core : core) {
+        totalCpuTicks += core->getTotalTicks();
+        activeCpuTicks += core->getActiveTicks();
+        idleCpuTicks += core->getIdleTicks();
+    }
+    const int width = 10; // Adjust the width for right alignment
+    output << std::right << std::setw(width) << totalMemory << " KB total memory\n";
+    output << std::right << std::setw(width) << usedMemorySize << " KB used memory\n";
+    output << std::right << std::setw(width) << freeMemorySize << " KB free memory\n";
+    output << std::right << std::setw(width) << idleCpuTicks << "    idle CPU ticks\n";
+    output << std::right << std::setw(width) << activeCpuTicks << "    active CPU ticks\n";
+    output << std::right << std::setw(width) << totalCpuTicks << "    total CPU ticks\n";
+	output << "\n" << std::endl;
+    return output.str();
 }
 
 std::shared_ptr<Process> GlobalScheduler::findProcess(String name) {
@@ -299,3 +317,5 @@ float GlobalScheduler::getCPUUtilization() {
 	return (static_cast<float>(usedCores) / totalCores) * 100;
 
 }
+
+

@@ -57,16 +57,52 @@ int CPUCore::getTimeElapsed() {
 }
 
 void CPUCore::tick() {
+    //old implementation remove next time
+    //if (delayPerExec == 0) {
+    //    processTask();
+    //    return;
+    //}
 
-    if (delayPerExec == 0) {
-        processTask();
-        return;
+    //tickCounter++;
+
+    //if (tickCounter >= delayPerExec) {
+    //    processTask();
+    //    tickCounter = 0; 
+    //}
+
+    totalTickCounter++;
+    if (currProcess) {
+       
+        activeTickCounter++;
+
+        if (delayPerExec == 0) {
+            processTask();
+            return; 
+        }
+
+        tickCounter++;
+        if (tickCounter >= delayPerExec) {
+            processTask();
+            tickCounter = 0; 
+        }
+    }
+    else {
+        idleTickCounter++;
     }
 
-    tickCounter++;
+    //sleep for for now
+	std::this_thread::sleep_for(std::chrono::microseconds(1));
+}
 
-    if (tickCounter >= delayPerExec) {
-        processTask();
-        tickCounter = 0; 
-    }
+
+int CPUCore::getTotalTicks() const {
+    return totalTickCounter;
+}
+
+int CPUCore::getActiveTicks() const {
+    return activeTickCounter;
+}
+
+int CPUCore::getIdleTicks() const {
+    return idleTickCounter;
 }

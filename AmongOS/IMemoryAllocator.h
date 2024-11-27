@@ -11,4 +11,7 @@ public:
 	virtual bool allocate(std::shared_ptr<Process> p) = 0;
 	virtual void deallocate(int pid) = 0;
 	virtual String visualizeProcessesInMemory() = 0;
+
+	virtual size_t getUsedMemorySize() const = 0;
+	virtual size_t getMaximumSize() const = 0;
 };

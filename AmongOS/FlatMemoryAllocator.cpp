@@ -285,3 +285,19 @@ void FlatMemoryAllocator::initializeMemory()
 {
 	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1, ""));
 }
+
+size_t FlatMemoryAllocator::getUsedMemorySize() const
+{
+	size_t usedMemorySize = 0;
+	for (const auto& block : usedMemory) {
+		usedMemorySize += block.getSize();
+	}
+	return usedMemorySize;
+}
+
+size_t FlatMemoryAllocator::getMaximumSize()  const
+{
+	return maximumSize;
+}
+
+

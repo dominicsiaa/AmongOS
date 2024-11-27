@@ -10,6 +10,7 @@
 #include "IMemoryAllocator.h"
 #include <queue>
 #include <string>
+#include <iomanip>
 
 class GlobalScheduler : public AScheduler {
 private:

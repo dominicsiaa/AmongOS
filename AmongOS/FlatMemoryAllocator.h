@@ -31,6 +31,9 @@ public:
 
 	void mergeFree();
 
+	size_t getUsedMemorySize() const override;
+	size_t getMaximumSize() const override ;
+
 private:
 	size_t maximumSize;
 	std::list<MemoryBlock> usedMemory; 
