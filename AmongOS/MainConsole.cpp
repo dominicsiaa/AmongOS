@@ -66,7 +66,7 @@ void MainConsole::runSchedulerTest() {
         (std::rand() % (config.max_mem_per_proc - config.min_mem_per_proc + 1));
     flags.requireMemory = true;
 
-    auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags);
+    auto process = std::make_shared<Process>(processCounter, "Process" + std::to_string(processCounter), flags, config.mem_per_frame);
     process->generateDummyCommands(config.min_ins, config.max_ins);
     this->addProcess(process);
     processCounter++;
@@ -138,7 +138,7 @@ void MainConsole::process() {
                 this->config.min_mem_per_proc = std::stoul(configMap["min-mem-per-proc"]);
 				this->config.max_mem_per_proc = std::stoul(configMap["max-mem-per-proc"]);
 
-                GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec, this->config.max_overall_mem);
+                GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec, this->config.max_overall_mem, this->config.mem_per_frame);
                 this->isInitialized = true;
 
             	std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
@@ -238,7 +238,7 @@ void MainConsole::process() {
             flags.memoryRequired = config.min_mem_per_proc +
                 (std::rand() % (config.max_mem_per_proc - config.min_mem_per_proc + 1));
 
-            auto process = std::make_shared<Process>(processCounter, processName, flags);
+            auto process = std::make_shared<Process>(processCounter, processName, flags, config.mem_per_frame);
             processCounter++;
             process->generateDummyCommands(config.min_ins, config.max_ins);
             this->addProcess(process);

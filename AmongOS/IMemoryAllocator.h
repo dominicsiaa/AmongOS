@@ -9,7 +9,7 @@ public:
 	virtual ~IMemoryAllocator() = default;
 
 	virtual bool allocate(std::shared_ptr<Process> p) = 0;
-	virtual void deallocate(int pid) = 0;
+	virtual void deallocate(std::shared_ptr<Process> p) = 0;
 	virtual String visualizeProcessesInMemory() = 0;
 
 	virtual size_t getUsedMemorySize() const = 0;

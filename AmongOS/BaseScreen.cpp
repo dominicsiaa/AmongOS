@@ -22,7 +22,7 @@ void BaseScreen::onEnabled()
 	std::cout << "Current instruction line: " << this->attachedProcess->getCommandCounter() << std::endl;
 	std::cout << "Lines of code: " << this->attachedProcess->getTotalCommands() << std::endl << std::endl;
 	std::cout << "root:\\>";
-	
+
 	this->command.clear();
 	this->commandEntered = false;
 	this->inputWorker->update(true);

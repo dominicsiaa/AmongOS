@@ -146,6 +146,7 @@
     <ClCompile Include="IThread.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainConsole.cpp" />
+    <ClCompile Include="PagingAllocator.cpp" />
     <ClCompile Include="PrintCommand.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="SchedulerWorker.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="InputWorker.h" />
     <ClInclude Include="IThread.h" />
     <ClInclude Include="MainConsole.h" />
+    <ClInclude Include="PagingAllocator.h" />
     <ClInclude Include="PrintCommand.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="SchedulerWorker.h" />

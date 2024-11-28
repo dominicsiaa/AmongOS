@@ -14,7 +14,7 @@
 
 class GlobalScheduler : public AScheduler {
 private:
-	GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem);
+	GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem, size_t mem_per_frame);
 	~GlobalScheduler() = default;
 	static GlobalScheduler* sharedInstance;
 
@@ -39,7 +39,7 @@ private:
 
 public:
 	static GlobalScheduler* getInstance();
-	static void initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem);
+	static void initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem, size_t mem_per_frame);
 	static void destroy(); 
 
 	void addProcess(std::shared_ptr<Process> process) override;

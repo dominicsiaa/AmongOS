@@ -5,6 +5,7 @@
 #include <string> 
 #include <sstream>
 #include <chrono>
+#include <unordered_map>
 
 using String = std::string;
 
@@ -27,7 +28,7 @@ public:
         FINISHED
     };
 
-    Process(int pid, String name, RequirementFlags requirementFlags);
+    Process(int pid, String name, RequirementFlags requirementFlags, size_t memPerFrame);
     ~Process() = default;
 
     void addCommand(ICommand::CommandType commandType);
@@ -50,6 +51,8 @@ public:
     void setStartTime();
     void setCPUCoreId(int coreId);
     void setState(ProcessState state);
+
+    std::unordered_map<size_t, size_t> pageTable;
 
 private:
     int pid;

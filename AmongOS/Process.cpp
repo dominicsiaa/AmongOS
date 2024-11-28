@@ -6,9 +6,21 @@
 #include <random>
 
 
-Process::Process(int pid, String name, RequirementFlags requirementFlags)
+Process::Process(int pid, String name, RequirementFlags requirementFlags, size_t memPerFrame)
     : pid(pid), name(name), requirementFlags(requirementFlags), commandCounter(0), currentState(READY)
 {
+    size_t totalPages = requirementFlags.memoryRequired / memPerFrame;
+    size_t remainingMemory = requirementFlags.memoryRequired % memPerFrame;
+
+    if (remainingMemory > 0)
+    {
+		totalPages++;
+	}
+
+    for (size_t page = 0; page < totalPages; ++page)
+    {
+        pageTable[page] = 0;
+    }
 }
 
 void Process::addCommand(ICommand::CommandType commandType)

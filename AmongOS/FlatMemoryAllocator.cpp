@@ -190,8 +190,10 @@ void FlatMemoryAllocator::removeFromBackingStore(int pid)
 	backingStore.close();
 }
 
-void FlatMemoryAllocator::deallocate(int pid)
+void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> p)
 {
+	int pid = p->getPID();
+
 	auto it = usedMemory.begin();
 	while (it != usedMemory.end()) {
 		if (it->processId == pid) {

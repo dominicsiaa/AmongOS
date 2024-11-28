@@ -3,12 +3,13 @@
 #include <filesystem>
 
 #include "FlatMemoryAllocator.h"
+#include "PagingAllocator.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem) : AScheduler(FCFS, -1, "GlobalScheduler") {
+GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem, size_t mem_per_frame) : AScheduler(FCFS, -1, "GlobalScheduler") {
 
     this->numCores = numCores;
     for (int i = 0; i < numCores; i++)
@@ -24,7 +25,15 @@ GlobalScheduler::GlobalScheduler(int numCores, int quantumTime, std::string sche
     this->quantumTime = quantumTime;
     this->scheduler = scheduler;
 
-    this->memoryAllocator = std::make_shared<FlatMemoryAllocator>(max_overall_mem);
+    if(max_overall_mem == mem_per_frame)
+    {
+        this->memoryAllocator = std::make_shared<FlatMemoryAllocator>(max_overall_mem);
+    } else
+    {
+	    this->memoryAllocator = std::make_shared<PagingAllocator>(max_overall_mem, mem_per_frame);
+    }
+
+    
 }
 
 GlobalScheduler* GlobalScheduler::sharedInstance = nullptr;
@@ -33,9 +42,9 @@ GlobalScheduler* GlobalScheduler::getInstance()
 	return sharedInstance;
 }
 
-void GlobalScheduler::initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem)
+void GlobalScheduler::initialize(int numCores, int quantumTime, std::string scheduler, unsigned int delay, size_t max_overall_mem, size_t mem_per_frame)
 {
-	sharedInstance = new GlobalScheduler(numCores, quantumTime, scheduler, delay, max_overall_mem);
+	sharedInstance = new GlobalScheduler(numCores, quantumTime, scheduler, delay, max_overall_mem, mem_per_frame);
 }
 
 void GlobalScheduler::addProcess(std::shared_ptr<Process> process) {
@@ -96,7 +105,7 @@ void GlobalScheduler::doRR() {
             {
                 std::shared_ptr<Process> process = core[i]->getCurrProcess();
 
-                memoryAllocator->deallocate(process->getPID());
+                memoryAllocator->deallocate(process);
                 core[i]->clearCurrentProcess();
                 finishedProcesses.push_back(process);
                 ongoingProcesses.remove(process);

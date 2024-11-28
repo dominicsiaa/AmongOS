@@ -26,7 +26,7 @@ public:
 	~FlatMemoryAllocator() override;
 
 	bool allocate(std::shared_ptr<Process> p) override;
-	void deallocate(int pid) override;
+	void deallocate(std::shared_ptr<Process> p) override;
 	String visualizeProcessesInMemory() override;
 
 	void mergeFree();
