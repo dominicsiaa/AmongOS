@@ -101,17 +101,68 @@ void PagingAllocator::deallocate(std::shared_ptr<Process> p)
 
 String PagingAllocator::visualizeProcessesInMemory()
 {
-	return String();
+	size_t totalMemory = maximumSize;
+	size_t usedMemorySize = getUsedMemorySize();
+	float memoryUtilization = (static_cast<float>(usedMemorySize) / totalMemory) * 100;
+	std::ostringstream visualizedMemory;
+
+	visualizedMemory << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	visualizedMemory << "| PROCESS-SMI V01.00 Driver Version: 01.00 |" << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	visualizedMemory << "CPU utilization: " << GlobalScheduler::getInstance()->getCPUUtilization() << "%" << "\n";
+	visualizedMemory << "Memory Usage: " << usedMemorySize << "KB / " << totalMemory << "KB\n";
+	visualizedMemory << "Memory Utilization: " << std::fixed << std::setprecision(0) << memoryUtilization << "%\n";
+	visualizedMemory << "\n";
+	visualizedMemory << "============================================" << "\n";
+	visualizedMemory << "Running Processes and memory usage: " << "\n";
+	visualizedMemory << "--------------------------------------------" << "\n";
+	for (const auto& processInfo : processList) {
+		const auto& process = processInfo.process;
+		const auto& pageTable = process->pageTable;
+
+		// Count the number of allocated pages
+		size_t allocatedPages = std::count_if(
+			pageTable.begin(), pageTable.end(),
+			[](const std::pair<size_t, size_t>& page) {
+				return page.second != 0; // Check if the page is allocated (non-zero frame)
+			});
+
+		// Print process name and memory usage
+		visualizedMemory << process->getName() << "  ";
+		visualizedMemory << (allocatedPages * frameSize) << "KB\n";
+	}
+	visualizedMemory << "--------------------------------------------" << "\n";
+
+	return visualizedMemory.str();
+
 }
 
 size_t PagingAllocator::getUsedMemorySize() const
 {
-	return 0;
+	size_t usedMemory = 0;
+
+	// Iterate through all processes in the processList
+	for (const auto& processInfo : processList) {
+		const auto& pageTable = processInfo.process->pageTable;
+
+		// Count the number of allocated pages
+		size_t allocatedPages = std::count_if(
+			pageTable.begin(), pageTable.end(),
+			[](const std::pair<size_t, size_t>& page) {
+				return page.second != 0; // Check if the page is allocated (non-zero frame)
+			});
+
+		// Add the memory used by this process to the total
+		usedMemory += allocatedPages * frameSize;
+	}
+
+	return usedMemory;
 }
 
 size_t PagingAllocator::getMaximumSize() const
 {
-	return 0;
+	return maximumSize;
 }
 
 void PagingAllocator::writeToBackingStore(String content)
