@@ -12,6 +12,8 @@ PagingAllocator::PagingAllocator(size_t maximumSize, size_t memPerFrame)
 	this->maximumSize = maximumSize;
 	numFrames = maximumSize / memPerFrame;
 	frameSize = memPerFrame;
+	numPagedIn = 0;
+	numPagedOut = 0;
 
 	for (size_t i = 1; i <= numFrames; i++) {
 		freeFrameList.push_back(i);
@@ -56,6 +58,8 @@ bool PagingAllocator::allocate(std::shared_ptr<Process> p)
 
 		// set the page table entry to the frame number
 		page.second = frame;
+
+		numPagedIn++;
 	}
 
 	removeFromBackingStore(pid);
@@ -96,6 +100,8 @@ void PagingAllocator::deallocate(std::shared_ptr<Process> p)
 
 		freeFrameList.push_back(page.second);
 		page.second = 0;
+
+		numPagedOut++;
 	}
 
 	processList.remove_if([p](const ProcessInfo& pi) {
@@ -223,10 +229,10 @@ void PagingAllocator::removeFromBackingStore(int pid)
 
 int PagingAllocator::getNumPagedIn() const
 {
-	return 0; // please implement counter
+	return numPagedIn; // please implement counter
 }
 
 int PagingAllocator::getNumPagedOut() const
 {
-	return 0;  // please implement counter
+	return numPagedOut;  // please implement counter
 }
