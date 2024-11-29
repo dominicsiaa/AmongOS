@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <cstdlib>
+#include <filesystem>
 
 MainConsole::MainConsole() : AConsole("MainConsole") {
     this->isInitialized = false;
@@ -140,6 +141,16 @@ void MainConsole::process() {
 
                 GlobalScheduler::initialize(this->config.num_cpu, this->config.quantum_cycles, this->config.scheduler, this->config.delay_per_exec, this->config.max_overall_mem, this->config.mem_per_frame);
                 this->isInitialized = true;
+
+                String directory = "memory_files";
+                String filePath = directory + "/backing_store.txt";
+
+                if (!std::filesystem::exists(directory)) {
+                    std::filesystem::create_directory(directory);
+                }
+
+                std::ofstream file(filePath, std::ios::trunc);
+                file.close();
 
             	std::cout << "\033[1;32mSuccessfully initialized AmongOS\n";
 

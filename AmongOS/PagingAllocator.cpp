@@ -54,28 +54,33 @@ bool PagingAllocator::allocate(std::shared_ptr<Process> p)
 		page.second = frame;
 	}
 
+	removeFromBackingStore(pid);
 	processList.push_back(p);
 	return true;
 }
 
 bool PagingAllocator::removeOldestProcess()
 {
-	if (processList.empty()) {
-		return false;
-	}
+	auto oldestBlockIt = std::min_element(processList.begin(), processList.end(), [](const ProcessInfo& a, const ProcessInfo& b) {
+		return a.allocationTime < b.allocationTime;
+	});
 
-	auto oldestProcess = processList.begin();
-	for (auto it = processList.begin(); it != processList.end(); ++it) {
-		if (it->allocationTime < oldestProcess->allocationTime) {
-			oldestProcess = it;
+	while (oldestBlockIt != processList.end()) {
+		if (!GlobalScheduler::getInstance()->isProcessRunning(oldestBlockIt->process->getName())) {
+			String content = std::to_string(oldestBlockIt->process->getPID()) + ", " +
+				"Name: " + oldestBlockIt->process->getName() + ", " +
+				"Command Counter: " + std::to_string(oldestBlockIt->process->getCommandCounter()) + ", " +
+				"Memory Required: " + std::to_string(oldestBlockIt->process->getSize()) + ", " +
+				"Page Size: " + std::to_string(frameSize) + "\n";
+
+			deallocate(oldestBlockIt->process);
+			writeToBackingStore(content);
+			return true;
 		}
+		oldestBlockIt = std::next(oldestBlockIt);
 	}
 
-	deallocate(oldestProcess->process);
-	//TODO: loop through process list and remove the oldest process
-
-	
-	return true;
+	return false;
 }
 
 void PagingAllocator::deallocate(std::shared_ptr<Process> p)
@@ -109,3 +114,54 @@ size_t PagingAllocator::getMaximumSize() const
 	return 0;
 }
 
+void PagingAllocator::writeToBackingStore(String content)
+{
+	String directory = "memory_files";
+	String filePath = directory + "/backing_store.txt";
+	std::fstream backingStore(filePath, std::ios::in | std::ios::out);
+
+	String line;
+	bool written = false;
+
+	// Find first empty line and write there
+	while (std::getline(backingStore, line)) {
+		if (line.empty()) {
+			auto pos = backingStore.tellg();
+			backingStore.seekp(pos - std::streamoff(line.size() + 1));
+			backingStore << content;
+			written = true;
+			break;
+		}
+	}
+
+	// If no empty line, write to end
+	if (!written) {
+		backingStore.clear();
+		backingStore.seekp(0, std::ios::end);
+		backingStore << content;
+	}
+
+	backingStore.close();
+}
+
+void PagingAllocator::removeFromBackingStore(int pid)
+{
+	String directory = "memory_files";
+	String filePath = directory + "/backing_store.txt";
+	std::fstream backingStore(filePath, std::ios::in | std::ios::out);
+
+	std::stringstream buffer;
+	String line;
+
+	while (std::getline(backingStore, line)) {
+		if (line.substr(0, line.find(',')) != std::to_string(pid)) {
+			buffer << line << "\n";
+		}
+	}
+
+	backingStore.close();
+
+	backingStore.open(filePath, std::ios::out | std::ios::trunc);
+	backingStore << buffer.str();
+	backingStore.close();
+}

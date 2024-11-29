@@ -54,6 +54,7 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 	size_t size = p->getSize();
 	int pid = p->getPID();
 	String processName = p->getName();
+	int commandCounter = p->getCommandCounter();
 
 	// if process is already in memory, return true
 	for (const auto& block : usedMemory) {
@@ -78,7 +79,7 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> p)
 				size_t startAddress = it->startAddress;
 				size_t endAddress = startAddress + size - 1;
 
-				usedMemory.emplace_back(startAddress, endAddress, pid, processName);
+				usedMemory.emplace_back(startAddress, endAddress, pid, processName, commandCounter);
 				if (blockSize == size) {
 					freeMemory.erase(it);
 				}
@@ -121,8 +122,10 @@ bool FlatMemoryAllocator::removeOldestBlock()
 	while (oldestBlockIt != usedMemory.end()) {
 		if (!GlobalScheduler::getInstance()->isProcessRunning(oldestBlockIt->processName)) {
 			String content = std::to_string(oldestBlockIt->processId) + ", " +
-				oldestBlockIt->processName + ", " +
-				std::to_string(oldestBlockIt->getSize()) + "KB\n";
+				"Name: " + oldestBlockIt->processName + ", " +
+				"Command Counter: " + std::to_string(oldestBlockIt->commandCounter) + ", " +
+				"Memory Required: " + std::to_string(oldestBlockIt->getSize()) + ", " +
+				"Page Size: " + std::to_string(maximumSize) + "\n";
 
 			freeMemory.push_back(*oldestBlockIt);
 			usedMemory.erase(oldestBlockIt);
@@ -285,7 +288,7 @@ String FlatMemoryAllocator::visualizeProcessesInMemory()
 
 void FlatMemoryAllocator::initializeMemory()
 {
-	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1, ""));
+	freeMemory.push_back(MemoryBlock(0, maximumSize - 1, -1, "", -1));
 }
 
 size_t FlatMemoryAllocator::getUsedMemorySize() const
