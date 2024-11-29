@@ -157,6 +157,6 @@ size_t PagingAllocator::getUsedMemorySize() const
 
 size_t PagingAllocator::getMaximumSize() const
 {
-	return 0;
+	return maximumSize;
 }
 
