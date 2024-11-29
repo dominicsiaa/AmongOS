@@ -265,7 +265,7 @@ String GlobalScheduler::callProcessSmi()
 String GlobalScheduler::callVmStat()
 {
     std::ostringstream output;
-    size_t totalMemory = memoryAllocator->getUsedMemorySize();
+    size_t totalMemory = memoryAllocator->getMaximumSize();
     size_t usedMemorySize = memoryAllocator->getUsedMemorySize();
     size_t freeMemorySize = totalMemory - usedMemorySize;
 
