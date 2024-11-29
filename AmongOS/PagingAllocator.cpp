@@ -72,7 +72,9 @@ bool PagingAllocator::removeOldestProcess()
 	}
 
 	deallocate(oldestProcess->process);
-	processList.erase(oldestProcess);
+	//TODO: loop through process list and remove the oldest process
+
+	
 	return true;
 }
 
