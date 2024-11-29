@@ -74,6 +74,7 @@ void GlobalScheduler::doFCFS() {
         {
             if (core[i]->getCurrProcess()->getState() == Process::FINISHED)
             {
+                memoryAllocator->deallocate(core[i]->getCurrProcess());
                 finishedProcesses.push_back(core[i]->getCurrProcess());
                 ongoingProcesses.remove(core[i]->getCurrProcess());
                 core[i]->clearCurrentProcess();
@@ -86,6 +87,10 @@ void GlobalScheduler::doFCFS() {
         }
 
         std::shared_ptr<Process> process = readyQueue.front();
+        if (!memoryAllocator->allocate(process)) {
+            break;
+        }
+
         process->setCPUCoreId(i);
         process->setState(Process::RUNNING);
         ongoingProcesses.push_back(process);

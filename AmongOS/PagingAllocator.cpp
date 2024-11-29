@@ -44,6 +44,10 @@ bool PagingAllocator::allocate(std::shared_ptr<Process> p)
 		// if there are no free frames, return false
 		if (freeFrameList.empty()) {
 			removeOldestProcess();
+
+			if (freeFrameList.empty()) {
+				return false;
+			}
 		}
 
 		// get the first free frame
