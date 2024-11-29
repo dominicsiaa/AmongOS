@@ -268,6 +268,8 @@ String GlobalScheduler::callVmStat()
     size_t totalMemory = memoryAllocator->getMaximumSize();
     size_t usedMemorySize = memoryAllocator->getUsedMemorySize();
     size_t freeMemorySize = totalMemory - usedMemorySize;
+    int numPagedIn = memoryAllocator->getNumPagedIn();
+    int numPagedOut = memoryAllocator->getNumPagedOut();
 
     int totalCpuTicks = 0;
     int activeCpuTicks = 0;
@@ -285,6 +287,8 @@ String GlobalScheduler::callVmStat()
     output << std::right << std::setw(width) << idleCpuTicks << " idle CPU ticks\n";
     output << std::right << std::setw(width) << activeCpuTicks << " active CPU ticks\n";
     output << std::right << std::setw(width) << totalCpuTicks << " total CPU ticks\n";
+    output << std::right << std::setw(width) << numPagedIn << " number of paged in\n"; // change print laterrr
+    output << std::right << std::setw(width) << numPagedOut << " number of paged out\n"; // change print
 	output << "\n" << std::endl;
     return output.str();
 }

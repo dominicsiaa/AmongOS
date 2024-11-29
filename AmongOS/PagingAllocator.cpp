@@ -220,3 +220,13 @@ void PagingAllocator::removeFromBackingStore(int pid)
 	backingStore << buffer.str();
 	backingStore.close();
 }
+
+int PagingAllocator::getNumPagedIn() const
+{
+	return 0; // please implement counter
+}
+
+int PagingAllocator::getNumPagedOut() const
+{
+	return 0;  // please implement counter
+}

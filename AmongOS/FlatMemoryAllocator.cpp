@@ -305,4 +305,13 @@ size_t FlatMemoryAllocator::getMaximumSize()  const
 	return maximumSize;
 }
 
+int FlatMemoryAllocator::getNumPagedIn() const
+{
+	return 0; // because flat memory has no pages
+}
+
+int FlatMemoryAllocator::getNumPagedOut() const
+{
+	return 0;  // because flat memory has no pages
+}
 

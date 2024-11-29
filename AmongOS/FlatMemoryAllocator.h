@@ -33,7 +33,9 @@ public:
 	void mergeFree();
 
 	size_t getUsedMemorySize() const override;
-	size_t getMaximumSize() const override ;
+	size_t getMaximumSize() const override;
+	int getNumPagedIn() const override;
+	int getNumPagedOut() const override;
 
 private:
 	size_t maximumSize;

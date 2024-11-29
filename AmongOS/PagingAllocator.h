@@ -25,11 +25,15 @@ public:
 
 	size_t getUsedMemorySize() const override;
 	size_t getMaximumSize() const override;
+	int getNumPagedIn() const override;
+	int getNumPagedOut() const override;
 
 private:
 	size_t maximumSize;
 	size_t numFrames;
 	size_t frameSize;
+	int numPagedIn;
+	int numPagedOut;
 
 	std::list<size_t> freeFrameList;
 	std::list<ProcessInfo> processList;

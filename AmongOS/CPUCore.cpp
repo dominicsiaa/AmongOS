@@ -91,7 +91,7 @@ void CPUCore::tick() {
     }
 
     //sleep for for now
-	std::this_thread::sleep_for(std::chrono::microseconds(1));
+	std::this_thread::sleep_for(std::chrono::microseconds(50));
 }
 
 

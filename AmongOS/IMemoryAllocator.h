@@ -14,4 +14,6 @@ public:
 
 	virtual size_t getUsedMemorySize() const = 0;
 	virtual size_t getMaximumSize() const = 0;
+	virtual int getNumPagedIn() const = 0;
+	virtual int getNumPagedOut() const = 0;
 };
